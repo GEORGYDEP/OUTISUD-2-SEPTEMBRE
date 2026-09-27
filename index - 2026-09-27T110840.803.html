@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="fr-BE">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OUTISUD 2 — Achats, ventes et trésorerie (septembre)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e14; --bg2:#0f151f; --bg3:#16202d; --card:#121b27;
+  --accent:#3ae08c; --accent2:#1fa968; --orange:#ff9f43; --blue:#4aa8ff; --violet:#a78bfa;
+  --text:#e9eff7; --text2:#9fb0c5; --text3:#63758c;
+  --border:#22303f; --radius:14px;
+  --success:#3ae08c; --error:#ff5f6d; --warn:#ffc94d;
+  --paper:#fdfdf9; --ink:#1d2733;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--text);
+  background-image:radial-gradient(1100px 520px at 12% -8%,rgba(58,224,140,.10),transparent 60%),
+                   radial-gradient(900px 460px at 96% 4%,rgba(255,159,67,.09),transparent 60%);
+  background-attachment:fixed;min-height:100vh;line-height:1.55;-webkit-text-size-adjust:100%;
+}
+.mono{font-family:'Space Mono',monospace}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit}
+.hidden{display:none !important}
+
+/* ---------- LAYOUT ---------- */
+.wrap{max-width:1120px;margin:0 auto;padding:16px}
+.topbar{
+  position:sticky;top:0;z-index:60;background:rgba(10,14,20,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-in{max-width:1120px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{font-weight:800;letter-spacing:.4px;font-size:1rem;display:flex;align-items:center;gap:8px}
+.brand span.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.spacer{flex:1}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
+  background:var(--bg3);border:1px solid var(--border);font-size:.8rem;font-weight:600;white-space:nowrap
+}
+.badge.acc{color:var(--accent);border-color:rgba(58,224,140,.35)}
+.badge.org{color:var(--orange);border-color:rgba(255,159,67,.35)}
+
+.progress-outer{height:5px;background:var(--bg3);width:100%}
+.progress-inner{height:100%;background:linear-gradient(90deg,var(--accent),var(--orange));width:0%;transition:width .5s ease}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 18px;border-radius:12px;font-weight:700;font-size:.92rem;
+  background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  transition:transform .12s ease,background .18s ease,border-color .18s ease;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#07130c;border:none}
+.btn-orange{background:linear-gradient(135deg,var(--orange),#ff7a2f);color:#2b1400;border:none}
+.btn-ghost{background:transparent}
+.btn-acc-outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent)}
+.btn-acc-outline:hover{background:var(--accent);color:#07130c}
+.btn-org-outline{background:transparent;border:1.5px solid var(--orange);color:var(--orange)}
+.btn-org-outline:hover{background:var(--orange);color:#2b1400}
+.btn-sm{padding:7px 12px;font-size:.8rem;border-radius:9px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ---------- CARDS ---------- */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.card+.card{margin-top:14px}
+h1{font-size:1.7rem;font-weight:800;line-height:1.2}
+h2{font-size:1.2rem;font-weight:700}
+h3{font-size:1rem;font-weight:700}
+.muted{color:var(--text2)}
+.small{font-size:.85rem}
+.tiny{font-size:.78rem}
+
+/* ---------- HOME ---------- */
+.hero{text-align:center;padding:26px 18px}
+.hero .kicker{color:var(--accent);font-weight:700;letter-spacing:2px;font-size:.75rem;text-transform:uppercase}
+.hero h1{margin:10px 0 8px;font-size:2rem}
+.hero p{color:var(--text2);max-width:640px;margin:0 auto}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:20px;text-align:left}
+.feat div{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:13px}
+.feat b{display:block;margin-bottom:3px}
+
+/* ---------- HUB ---------- */
+.chapter{margin-top:22px}
+.chapter-title{
+  display:flex;align-items:center;gap:10px;font-weight:800;font-size:.95rem;
+  color:var(--orange);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px
+}
+.chapter-title:before{content:'';width:4px;height:18px;border-radius:2px;background:var(--orange)}
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:11px}
+.hub-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;
+  text-align:left;display:flex;gap:11px;align-items:flex-start;transition:.16s;width:100%
+}
+.hub-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.hub-num{
+  flex:0 0 34px;height:34px;border-radius:9px;background:var(--bg3);display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:.9rem;font-family:'Space Mono',monospace
+}
+.hub-card.done .hub-num{background:rgba(58,224,140,.15);color:var(--accent)}
+.hub-card.shown .hub-num{background:rgba(255,159,67,.15);color:var(--orange)}
+.hub-card.skipped .hub-num{background:rgba(255,95,109,.14);color:var(--error)}
+.hub-t{font-weight:700;font-size:.9rem;line-height:1.3}
+.hub-s{color:var(--text3);font-size:.76rem;margin-top:3px}
+.hub-star{margin-left:auto;font-size:1rem}
+
+/* ---------- DOCUMENTS (papier) ---------- */
+.doc{
+  background:var(--paper);color:var(--ink);border-radius:10px;padding:16px;font-size:.83rem;
+  box-shadow:0 8px 26px rgba(0,0,0,.4);border:1px solid #dcd8cc;overflow-x:auto
+}
+.doc+.doc{margin-top:12px}
+.doc-tag{
+  display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  padding:3px 9px;border-radius:5px;background:#1d2733;color:#fff;margin-bottom:10px
+}
+.doc-tag.nc{background:#b0342c}
+.doc-tag.ext{background:#1c5f9e}
+.doc-tag.note{background:#7a5b12}
+.doc-head{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:10px}
+.doc-party{min-width:170px}
+.doc-party .lbl{font-size:.63rem;text-transform:uppercase;letter-spacing:1px;color:#7c7668;font-weight:700}
+.doc-party .nm{font-weight:800;font-size:.95rem}
+.doc-party .ln{font-size:.78rem;line-height:1.35}
+.doc-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.doc-meta div{background:#efece2;border-radius:6px;padding:5px 9px;font-size:.75rem}
+.doc-meta b{display:block;font-size:.63rem;text-transform:uppercase;letter-spacing:.8px;color:#7c7668}
+table.doc-t{width:100%;border-collapse:collapse;font-size:.79rem;min-width:420px}
+table.doc-t th{background:#e9e5d8;text-align:left;padding:6px 8px;font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #cdc7b6}
+table.doc-t td{padding:6px 8px;border-bottom:1px solid #e6e2d5}
+table.doc-t .r{text-align:right;font-family:'Space Mono',monospace;white-space:nowrap}
+.doc-tot{margin-top:10px;margin-left:auto;width:100%;max-width:330px;font-size:.8rem}
+.doc-tot div{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dotted #cdc7b6}
+.doc-tot div.sum{font-weight:800;font-size:.98rem;border-bottom:none;border-top:2px solid var(--ink);margin-top:5px;padding-top:7px}
+.doc-tot span:last-child{font-family:'Space Mono',monospace}
+.doc-legal{margin-top:11px;padding:8px 10px;background:#fff7e0;border-left:3px solid #d9a520;font-size:.75rem;font-style:italic}
+.doc-note{font-size:.85rem;line-height:1.5}
+.doc-stamp{
+  display:inline-block;transform:rotate(-7deg);border:2px solid #b0342c;color:#b0342c;
+  padding:3px 10px;border-radius:5px;font-weight:800;letter-spacing:1.5px;font-size:.74rem;margin-top:8px
+}
+
+/* ---------- THÉORIE ---------- */
+.theo{background:linear-gradient(135deg,rgba(74,168,255,.10),rgba(167,139,250,.07));border:1px solid rgba(74,168,255,.3);border-radius:12px;overflow:hidden}
+.theo-h{display:flex;align-items:center;gap:8px;padding:11px 14px;font-weight:700;font-size:.9rem;width:100%;text-align:left;color:var(--blue)}
+.theo-h .chev{margin-left:auto;transition:.2s}
+.theo.open .chev{transform:rotate(180deg)}
+.theo-b{padding:0 14px 14px;font-size:.87rem;color:var(--text2);display:none}
+.theo.open .theo-b{display:block}
+.theo-b b,.theo-b strong{color:var(--text)}
+.theo-b ul{margin:6px 0 6px 18px}
+.theo-b li{margin:3px 0}
+.theo-b code{background:var(--bg3);padding:1px 6px;border-radius:5px;font-family:'Space Mono',monospace;font-size:.85em;color:var(--accent)}
+.theo-b table{width:100%;border-collapse:collapse;margin:8px 0;font-size:.82rem}
+.theo-b th,.theo-b td{border:1px solid var(--border);padding:5px 8px;text-align:left}
+.theo-b th{background:var(--bg3);color:var(--text)}
+.theo.locked{background:var(--bg3);border-color:var(--border)}
+.theo.locked .theo-h{color:var(--text3);cursor:default}
+.theo-lock{padding:0 14px 13px;font-size:.82rem;color:var(--text3);line-height:1.5}
+.theo-cnt{margin-left:auto;font-size:.76rem;font-weight:700;color:var(--orange);white-space:nowrap}
+
+/* ---------- JOURNAL ---------- */
+.jrn{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:14px}
+.jrn-h{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--bg3);flex-wrap:wrap}
+.jrn-badge{padding:4px 10px;border-radius:7px;font-weight:800;font-size:.74rem;letter-spacing:1px;text-transform:uppercase}
+.j-ACHAT{background:rgba(255,95,109,.16);color:#ff8b95}
+.j-VENTE{background:rgba(58,224,140,.16);color:var(--accent)}
+.j-CAISSE{background:rgba(255,201,77,.16);color:var(--warn)}
+.j-FINANCIER{background:rgba(74,168,255,.16);color:var(--blue)}
+.j-OD{background:rgba(167,139,250,.16);color:var(--violet)}
+.jrn-t{font-weight:700;font-size:.9rem}
+.jrn-d{margin-left:auto;font-family:'Space Mono',monospace;font-size:.8rem;color:var(--text2)}
+.jrn-state{font-size:1.05rem}
+.jrn-body{padding:12px}
+
+table.grid{width:100%;border-collapse:separate;border-spacing:0 4px;font-size:.86rem}
+table.grid th{
+  font-size:.66rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);
+  text-align:left;padding:0 6px 4px;font-weight:700
+}
+table.grid td{padding:0 3px}
+table.grid input{
+  width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:8px;
+  padding:9px 8px;color:var(--text);font-size:.88rem;transition:.14s
+}
+table.grid input:focus{outline:none;border-color:var(--accent);background:var(--bg)}
+table.grid input.num{font-family:'Space Mono',monospace;text-align:right}
+table.grid input.code{font-family:'Space Mono',monospace;text-align:center}
+.lbl-cell{
+  font-size:.76rem;color:var(--text3);padding:0 6px;line-height:1.25;
+  overflow:hidden;text-overflow:ellipsis;display:block;max-width:190px
+}
+.cell-bad input{border-color:var(--error) !important;background:rgba(255,95,109,.10) !important}
+.cell-ok input{border-color:rgba(58,224,140,.55) !important;background:rgba(58,224,140,.07) !important}
+.row-extra input{border-color:var(--warn) !important;background:rgba(255,201,77,.08) !important}
+.del-btn{color:var(--text3);font-size:1rem;padding:6px}
+.del-btn:hover{color:var(--error)}
+.calc-hint{
+  font-family:'Space Mono',monospace;font-size:.72rem;color:var(--accent);
+  padding:2px 6px 0;display:block
+}
+.jrn-tot{
+  display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end;margin-top:8px;
+  font-family:'Space Mono',monospace;font-size:.8rem;color:var(--text2)
+}
+.jrn-tot b{color:var(--text)}
+.jrn-tot.bal b{color:var(--accent)}
+.jrn-tot.unbal b{color:var(--error)}
+.jrn-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px;align-items:center}
+
+/* ---------- FEEDBACK ---------- */
+.fb{border-radius:11px;padding:12px 14px;margin-top:11px;font-size:.87rem;border-left:4px solid}
+.fb-ok{background:rgba(58,224,140,.10);border-color:var(--accent)}
+.fb-bad{background:rgba(255,95,109,.09);border-color:var(--error)}
+.fb-hint{background:rgba(255,201,77,.09);border-color:var(--warn)}
+.fb-sol{background:rgba(255,159,67,.09);border-color:var(--orange)}
+.fb h4{font-size:.9rem;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.fb ul{margin:4px 0 0 17px}
+.fb li{margin:4px 0;color:var(--text2)}
+.fb li b{color:var(--text)}
+.fb .loc{font-family:'Space Mono',monospace;background:var(--bg3);padding:1px 6px;border-radius:5px;font-size:.8em;color:var(--orange)}
+
+table.sol{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+table.sol th{background:var(--bg3);padding:6px 8px;text-align:left;font-size:.66rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
+table.sol td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:.82rem}
+table.sol td.lb{font-family:'Outfit',sans-serif;color:var(--text2)}
+table.sol td.r{text-align:right}
+
+/* ---------- BILAN ---------- */
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--text2);margin-bottom:12px}
+.legend b{color:var(--text)}
+.pill{display:inline-flex;align-items:center;gap:5px}
+table.bilan{width:100%;border-collapse:collapse;font-size:.85rem}
+table.bilan th{background:var(--bg3);padding:8px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
+table.bilan td{padding:8px;border-bottom:1px solid var(--border)}
+table.bilan td.c{text-align:center;font-family:'Space Mono',monospace}
+.grade{text-align:center;padding:20px}
+.grade .medal{font-size:3.6rem;line-height:1}
+.grade .gr{font-size:2.1rem;font-weight:800;margin:6px 0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:12px;text-align:center}
+.stat .v{font-size:1.5rem;font-weight:800;font-family:'Space Mono',monospace}
+.stat .k{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.7px}
+
+/* ---------- MODALS ---------- */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:14px}
+.modal-box{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:620px;
+  max-height:88vh;display:flex;flex-direction:column;animation:slideUp .28s cubic-bezier(.2,.9,.3,1)
+}
+.modal-box.wide{max-width:900px}
+@keyframes slideUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.modal-h{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--border)}
+.modal-h h3{flex:1;font-size:1.02rem}
+.modal-b{padding:18px;overflow:auto}
+.modal-f{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+.close-x{font-size:1.35rem;color:var(--text3);padding:0 5px;line-height:1}
+.close-x:hover{color:var(--text)}
+.field{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:.95rem}
+.field:focus{outline:none;border-color:var(--accent)}
+.err-msg{color:var(--error);font-size:.85rem;margin-top:9px;min-height:19px}
+.ref-search{margin-bottom:10px}
+.ref-list{max-height:52vh;overflow:auto}
+.ref-item{display:flex;gap:10px;padding:7px 9px;border-bottom:1px solid var(--border);font-size:.85rem}
+.ref-item .k{font-family:'Space Mono',monospace;color:var(--accent);font-weight:700;flex:0 0 82px}
+.ref-item .v{color:var(--text2)}
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:7px 14px;border-radius:9px;background:var(--bg3);font-size:.83rem;font-weight:700;border:1px solid var(--border)}
+.tab.on{background:var(--accent);color:#07130c;border-color:var(--accent)}
+table.lb{width:100%;border-collapse:collapse;font-size:.85rem}
+table.lb th{background:var(--bg3);padding:8px;text-align:left;font-size:.68rem;text-transform:uppercase;color:var(--text3)}
+table.lb td{padding:8px;border-bottom:1px solid var(--border)}
+table.lb tr.me{background:rgba(58,224,140,.09)}
+.bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--orange))}
+
+/* ---------- CONFETTIS ---------- */
+.confetti{position:fixed;top:-12px;width:9px;height:14px;z-index:300;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(104vh) rotate(760deg);opacity:0}}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:768px){
+  .wrap{padding:12px}
+  .hero h1{font-size:1.55rem}
+  table.grid,table.grid tbody,table.grid tr,table.grid td{display:block;width:100%}
+  table.grid thead{display:none}
+  table.grid tr{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:9px;margin-bottom:9px;position:relative}
+  table.grid td{padding:4px 0}
+  table.grid td:before{
+    content:attr(data-l);display:block;font-size:.63rem;text-transform:uppercase;
+    letter-spacing:.8px;color:var(--text3);font-weight:700;margin-bottom:3px
+  }
+  table.grid td.no-l:before{display:none}
+  .lbl-cell{max-width:none}
+  .del-btn{position:absolute;top:6px;right:6px}
+  .doc{font-size:.79rem;padding:12px}
+  .hub-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .brand{font-size:.88rem}
+  .badge{font-size:.72rem;padding:4px 9px}
+  .btn{padding:10px 14px;font-size:.86rem}
+  .grade .medal{font-size:3rem}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><span class="dot"></span> OUTISUD 2 — Écritures</div>
+    <div class="spacer"></div>
+    <div class="badge acc" id="bScore">⭐ 0 pts</div>
+    <div class="badge org mono" id="bTimer">⏱️ 00:00</div>
+    <button class="badge" id="bHub" onclick="goHub()">☰ Exercices</button>
+  </div>
+  <div class="progress-outer"><div class="progress-inner" id="progBar"></div></div>
+</div>
+
+<div class="wrap">
+  <div id="screenHome"></div>
+  <div id="screenHub" class="hidden"></div>
+  <div id="screenEx" class="hidden"></div>
+  <div id="screenFinal" class="hidden"></div>
+</div>
+
+<div id="modalHost"></div>
+
+<script>
+/* ============================================================
+   OUTISUD — Rappel des écritures comptables
+   Application pédagogique — Institut Saint-Luc Frameries
+   Correction automatique • ordre des lignes libre
+   ============================================================ */
+
+const TRACKING = {
+  appName: "Ecritures Comptables OUTISUD 2",
+  totalNiveaux: 20,
+  sessionId: null,
+  scriptUrl: "https://script.google.com/macros/s/AKfycbx9bRMVuHU2mgFLii1KcQXD3LdZahnDH1rf1cWv9RuDvQAt0l3VtLtxzmbH7MtpJWRjfA/exec"
+};
+
+/* ---------- PLAN COMPTABLE (extrait PCMN 4 chiffres) ---------- */
+const PCMN = {
+"1000":"Capital souscrit","1300":"Réserve légale","1330":"Réserves disponibles","1400":"Bénéfice reporté",
+"1410":"Perte reportée (-)","1740":"Autres emprunts",
+"2000":"Frais de constitution","2100":"Frais de recherche et développement","2200":"Terrains",
+"2210":"Constructions","2300":"Installations techniques et machines","2320":"Outillage",
+"2400":"Mobilier et matériel de bureau","2409":"Amortissements sur mobilier et matériel de bureau (-)",
+"2410":"Matériel roulant","2419":"Amortissements sur matériel roulant (-)",
+"3400":"Stock de marchandises","3600":"Acomptes versés sur stocks",
+"4000":"Clients","4010":"Effets à recevoir","4040":"Produits à recevoir",
+"4050":"Créances pour emballages à rendre","4051":"Fournisseurs débiteurs","4060":"Acomptes versés",
+"4070":"Créances douteuses",
+"4110":"T.V.A. à récupérer sur achats","4111":"T.V.A. déductible intracommunautaire",
+"4114":"T.V.A. à récupérer pour régularisation s/ N.C. de vente",
+"4115":"T.V.A. déductible import + report","4117":"T.V.A. sur acomptes versés",
+"4119":"Compte courant de l'administration T.V.A. (déductible)",
+"4400":"Fournisseurs","4410":"Effets à payer","4440":"Factures à recevoir",
+"4450":"Dettes pour emballages consignés","4451":"Clients créditeurs",
+"4510":"T.V.A. à payer sur ventes et prestations de services",
+"4511":"T.V.A. à payer intracommunautaire","4512":"T.V.A. à payer import + report",
+"4513":"T.V.A. due par le cocontractant (travaux immobiliers)",
+"4514":"T.V.A. due pour régularisation s/ N.C. d'achat",
+"4519":"Compte courant de l'administration T.V.A. (à payer)",
+"4530":"Précompte professionnel retenu","4540":"O.N.S.S.","4550":"Rémunérations",
+"4600":"Acomptes reçus sur commandes",
+"4900":"Charges à reporter","4920":"Charges à imputer","4990":"Comptes d'attente",
+"5400":"Valeurs échues à l'encaissement","5500":"Banques — compte courant",
+"5501":"Banques — chèques émis / paiements en cours","5700":"Caisse — espèces",
+"5800":"Virements internes",
+"6000":"Achats de matières premières","6010":"Achats de fournitures",
+"6020":"Achats de services, travaux et études","6040":"Achats de marchandises",
+"6080":"Remises, ristournes et rabais obtenus (-)","6094":"Variation des stocks de marchandises",
+"6100":"Charges locatives — terrains","6101":"Charges locatives — constructions (loyer)",
+"6103":"Charges locatives — matériel roulant (voitures)",
+"6106":"Entretien et réparations — constructions","6107":"Entretien et réparations — machines et outillage",
+"6108":"Entretien et réparations — matériel roulant (voitures)",
+"6110":"Fournitures de bureau et imprimés","6113":"Produits d'entretien",
+"6115":"Consommation eau","6116":"Consommation gaz","6117":"Consommation électricité",
+"6118":"Consommation mazout","6130":"Assurance incendie","6134":"Assurance matériel roulant (voitures)",
+"6140":"Transport sur vente","6144":"Transport par route","6152":"Honoraires comptables",
+"6157":"Honoraires avocats","6160":"Frais postaux","6162":"Téléphone, GSM",
+"6165":"Frais de déplacement (carburant)","6168":"Frais de réception limités",
+"6169":"Frais de réception non limités","6190":"Publicité et annonces",
+"6203":"Personnel employé — administratif","6210":"Cotisations patronales d'assurances sociales",
+"6302":"Dotations aux amortissements sur immobilisations corporelles",
+"6500":"Intérêts, commissions et frais afférents aux dettes",
+"6530":"Charges d'escompte de créances (escomptes accordés)",
+"6580":"Frais de banque et de règlement","6700":"Impôts ou précomptes dus ou versés",
+"7000":"Ventes de marchandises","7010":"Ventes de produits finis","7040":"Ventes d'emballages récupérables",
+"7070":"Prestations de services","7080":"Remises, ristournes et rabais accordés (-)",
+"7400":"Subsides d'exploitation","7480":"Récupérations de frais auprès de tiers",
+"7510":"Produits des actifs circulants","7560":"Escomptes obtenus des fournisseurs",
+"7580":"Récupérations de frais auprès de tiers"
+};
+
+/* ---------- GRILLES DE LA DÉCLARATION TVA ---------- */
+const GRILLES = [
+ {g:"CADRE II — Opérations à la sortie (ventes)"},
+ {k:"00",v:"Ventes soumises au taux 0 % (journaux, tabacs…)"},
+ {k:"01",v:"Ventes soumises à la T.V.A. de 6 %"},
+ {k:"02",v:"Ventes soumises à la T.V.A. de 12 %"},
+ {k:"03",v:"Ventes soumises à la T.V.A. de 21 %"},
+ {k:"44",v:"Services intracommunautaires (B2B) — base"},
+ {k:"45",v:"Ventes avec T.V.A. due par le COCONTRACTANT (autoliquidation)"},
+ {k:"46",v:"Livraisons INTRACOMMUNAUTAIRES exonérées (art. 39bis)"},
+ {k:"47",v:"EXPORTATIONS hors U.E. exonérées (art. 39)"},
+ {k:"48",v:"Notes de crédit relatives aux grilles 44 et 46"},
+ {k:"49",v:"Notes de crédit sur les autres ventes (grilles 00 à 47)"},
+ {g:"CADRE III — Opérations à l'entrée (achats)"},
+ {k:"81",v:"Achats de MARCHANDISES et matières premières"},
+ {k:"82",v:"Achats de SERVICES et biens divers (S.B.D.)"},
+ {k:"83",v:"Achats d'INVESTISSEMENTS (immobilisations)"},
+ {k:"84",v:"Notes de crédit reçues sur achats intracommunautaires"},
+ {k:"85",v:"Notes de crédit reçues sur les autres achats"},
+ {k:"86",v:"Acquisitions INTRACOMMUNAUTAIRES (base)"},
+ {k:"87",v:"Achats avec T.V.A. due par le cocontractant + IMPORTATIONS avec report"},
+ {g:"CADRE IV — T.V.A. due à l'État"},
+ {k:"54",v:"T.V.A. due sur les ventes (grilles 01, 02, 03)"},
+ {k:"55",v:"T.V.A. due sur les acquisitions intracommunautaires"},
+ {k:"56",v:"T.V.A. due par le cocontractant"},
+ {k:"57",v:"T.V.A. due sur importations avec report de paiement"},
+ {k:"63",v:"T.V.A. à régulariser (notes de crédit reçues d'un fournisseur)"},
+ {g:"CADRE V — T.V.A. déductible"},
+ {k:"59",v:"T.V.A. DÉDUCTIBLE sur les achats"},
+ {k:"64",v:"T.V.A. à régulariser (notes de crédit émises vers un client)"},
+ {g:"CADRE VI — Solde"},
+ {k:"71",v:"T.V.A. due à l'État (à payer)"},
+ {k:"72",v:"T.V.A. due par l'État (à récupérer)"}
+];
+
+/* ---------- CODES T.V.A. POPSY ---------- */
+const POPSY = [
+ {g:"JOURNAL D'ACHAT — régime belge"},
+ {k:"6M",v:"Marchandises 6 % (compte 60)"},
+ {k:"6S",v:"Services 6 % (compte 61)"},
+ {k:"6V",v:"Investissements 6 % (classe 2)"},
+ {k:"21M",v:"Marchandises 21 % → grille 81"},
+ {k:"21S",v:"Services et biens divers 21 % → grille 82"},
+ {k:"21V",v:"Investissements 21 % → grille 83"},
+ {g:"JOURNAL D'ACHAT — I = intracommunautaire, X = importation, C = cocontractant"},
+ {k:"6IM",v:"Marchandises intracommunautaires 6 % → grilles 81 + 86"},
+ {k:"21IM",v:"Marchandises intracommunautaires 21 % → grilles 81 + 86"},
+ {k:"21IS",v:"Services intracommunautaires → grilles 82 + 86 (ou 88)"},
+ {k:"21IV",v:"Investissements intracommunautaires → grilles 83 + 86"},
+ {k:"21XM",v:"Marchandises importées (report) → grilles 81 + 87"},
+ {k:"21XS",v:"Services importés (report) → grilles 82 + 87"},
+ {k:"21XV",v:"Investissements importés (report) → grilles 83 + 87"},
+ {k:"21CM",v:"Marchandises cocontractant → grilles 81 + 87"},
+ {k:"21CS",v:"Services cocontractant (travaux immobiliers) → grilles 82 + 87"},
+ {k:"21CV",v:"Investissements cocontractant → grilles 83 + 87"},
+ {g:"JOURNAL D'ACHAT — T.V.A. non déductible"},
+ {k:"21ND",v:"T.V.A. voiture : 50 % déductible seulement (grille 82 ou 83)"},
+ {k:"21ND100S",v:"T.V.A. 100 % non déductible : réception, restaurant, tabac, alcool"},
+ {g:"JOURNAL DE VENTE"},
+ {k:"0",v:"T.V.A. 0 %"},
+ {k:"6",v:"T.V.A. 6 % → grille 01"},
+ {k:"12",v:"T.V.A. 12 % → grille 02"},
+ {k:"21",v:"T.V.A. 21 % → grille 03"},
+ {k:"C0",v:"Cocontractant — autoliquidation → grille 45"},
+ {k:"I0",v:"Livraison intracommunautaire exonérée → grille 46"},
+ {k:"X0",v:"Exportation hors U.E. exonérée → grille 47"},
+ {g:"TOUS JOURNAUX"},
+ {k:"EX",v:"Exonéré / hors champ : loyers, timbres, taxes, assurances, emballages consignés"}
+];
+
+/* ---------- PARTENAIRES ---------- */
+const OUT = {nom:"SPRL OUTISUD", adr:["Chée Romaine 147","7500 TOURNAI"], tva:"BE 0415.776.939"};
+const ALLSIGN = {nom:"ALL SIGN", adr:["rue de l'École 2","7080 FRAMERIES"], tva:"BE 0424.850.991"};
+const VOLBUR = {nom:"VOLUME BUREAU SPRL", adr:["rue de la Joie 25","7080 FRAMERIES"], tva:"BE 0416.295.690"};
+const COTUBEX = {nom:"COTUBEX", adr:["rue des Fabriques 27-31","1400 NIVELLES"], tva:"BE 0861.775.912"};
+const LATOURE = {nom:"LATOURE", adr:["Chée de France 18","PARIS — FRANCE"], tva:"FR 12 716 672 051"};
+const HARDY = {nom:"HARDY Anna", adr:["Place de la Duchesse 29","7080 FRAMERIES"], tva:"BE 0424.850.991"};
+const LEJEUNE = {nom:"LEJEUNE Yves", adr:["Rue Champêtre 16","6790 SOIGNIES"], tva:"BE 0416.295.690"};
+const PRELAT = {nom:"PRELAT Peter", adr:["rue du Centre 21","7011 GHLIN"], tva:"BE 0861.775.912"};
+const AVI = {nom:"A.V.I. S.A.", adr:["rue du Collège 5","5000 NAMUR"], tva:"BE 0895.538.345"};
+const KRIDO = {nom:"KRIDOTRUST", adr:["rue d'Arenberg 6","L-1510 LUXEMBOURG"], tva:"LU 11180925"};
+const MONC = {nom:"MONCOUSIN Pierre", adr:["Rue Cardinal Mercier 31","6600 CHARLEROI"], tva:"BE 0202.239.951"};
+
+/* ---------- CHAPITRES (bilan final) ---------- */
+const CH_A = "A. Réouverture du dossier";
+const CH_B = "B. Achats : les cas particuliers";
+const CH_C = "C. Ventes et notes de crédit";
+const CH_D = "D. Trésorerie : caisse et banque";
+const CH_REVOIR = {
+  [CH_A]: "la réouverture des comptes : l'actif au débit, le capital au crédit.",
+  [CH_B]: "la facture d'achat et ses cas particuliers : emballages perdus et consignés, transport, escompte, investissement, cocontractant, acquisition intracommunautaire et notes de crédit reçues.",
+  [CH_C]: "la facture de vente et la note de crédit émise : taux de T.V.A., emballages consignés (4450), livraison intracommunautaire, cocontractant, grilles 48, 49 et 64.",
+  [CH_D]: "le journal de caisse et le journal financier : paiements de clients et de fournisseurs, virements internes (5800)."
+};
+
+/* Variante « une ligne de banque (ou de caisse) par opération » */
+function splitAlt(lines, bank){
+  const out = [];
+  lines.filter(l=>l.c!==bank).forEach(l=>{
+    out.push(l);
+    out.push(l.db!=null ? {c:bank, cr:l.db} : {c:bank, db:l.cr});
+  });
+  return out;
+}
+
+/* ---------- EXERCICES (ordre EXACT du document papier) ---------- */
+const DOC_EXT1 = {t:"ext", num:"1", compte:"12-4567890-02", ancD:"01/09/XX", ancS:"12.500,00",
+  ops:[{d:"13/09/XX", lib:"Virement Lejeune n° 15", mt:"31.115,00"},
+       {d:"15/09/XX", lib:"Virement Hardy fact. 1", mt:"5.468,00"},
+       {d:"17/09/XX", lib:"Virement vers RIDEC fact. 123", mt:"-1.654,00"},
+       {d:"20/09/XX", lib:"Virement vers All Sign", mt:"-27.736,69"}],
+  nouD:"20/09/XX", nouS:"19.692,31"};
+const DOC_CAISSE1 = {t:"caisse", num:"1", mois:"Septembre", init:"1.500,00", fin:"3.129,00",
+  ops:[{d:"02/09/XX", lib:"Valentin fact. 658", rec:"6.500,00"},
+       {d:"05/09/XX", lib:"Cotubex fact. 88", dep:"65,00"},
+       {d:"20/09/XX", lib:"Volume bureau fact. 699", dep:"4.806,00"}]};
+
+const EXOS = [
+
+/* ============ 1 ============ */
+{n:1, ch:CH_A, page:"page 1", t:"Écriture de réouverture au 01/09/XX",
+ docs:[{t:"note", titre:"Énoncé", html:`Tu es l'aide-comptable de la société <b>OUTISUD</b>. Avant d'encoder les documents de septembre, tu dois passer l'<b>écriture de réouverture</b> au 01/09/XX.<br><br>C'est à toi de retrouver les montants : cherche dans les documents ci-dessous l'argent dont la société dispose <b>au départ</b>, en banque et en caisse. Tout ce qui se trouve en banque et en caisse a pour contrepartie le compte <b>1000 Capital</b>.`},
+   DOC_EXT1, DOC_CAISSE1],
+ theo:{open:true, t:"Rappel — la réouverture des comptes", h:`
+  <p>La réouverture « rallume » la comptabilité en réinscrivant ce que l'entreprise possède et ce qu'elle doit.</p>
+  <ul><li>Les comptes d'<b>ACTIF</b> (banque, caisse…) se rouvrent au <b>DÉBIT</b>.</li>
+  <li>Le <b>capital</b> (passif) se rouvre au <b>CRÉDIT</b> et équilibre l'écriture.</li></ul>
+  <p>Le montant de départ d'un extrait est l'<b>ancien solde</b> ; celui d'une feuille de caisse est la <b>situation initiale</b>.</p>
+  <p>Aucun code T.V.A. : ce n'est ni un achat ni une vente. Dans Popsy : journal de réouverture, période <b>REP</b> — c'est la seule écriture où l'on encode directement 5500 et 5700.</p>`},
+ exp:`La banque démarre à <b>12.500,00 €</b> (ancien solde de l'extrait n° 1) et la caisse à <b>1.500,00 €</b> (situation initiale de la feuille de caisse 1). Ces 14.000,00 € d'actif ont pour contrepartie le capital : <b>ACTIF = PASSIF</b>.`,
+ jx:[{j:"OD", d:"01/09/XX", t:"Réouverture des comptes (journal ODR, période REP)",
+   hint:"Regarde l'ancien solde du premier extrait et la situation initiale de la première feuille de caisse. Ce que la société possède va au débit.",
+   l:[{c:"5500",db:12500},{c:"5700",db:1500},{c:"1000",cr:14000}]}]},
+
+/* ============ 2 ============ */
+{n:2, ch:CH_B, page:"page 2 (1er journal)", t:"Facture 556 — ALL SIGN : emballages, transport et escompte",
+ docs:[{t:"fac", num:"556", date:"02/09/XX", ech:"30 jours fin de mois", de:ALLSIGN, a:OUT,
+   lignes:[{q:"8", des:"Produit A", pu:"100,00", mt:"800,00"},{q:"11", des:"Produit B", pu:"2.000,00", mt:"22.000,00"},
+           {q:"1", des:"Emballages perdus A", pu:"40,00", mt:"40,00"},{q:"11", des:"Emballages consignés", pu:"5,00", mt:"55,00"},
+           {q:"", des:"Transport", pu:"250,00", mt:"250,00"}],
+   ht:"23.145,00", escompte:{lib:"Base T.V.A. après escompte de 2 % (461,80 €)", base:"22.628,20"},
+   tva:[{taux:"6 %", base:"1.068,20", mt:"64,09"},{taux:"21 %", base:"21.560,00", mt:"4.527,60"}], ttva:"4.591,69", pay:"27.736,69",
+   legal:"Escompte de 461,80 € si paiement au comptant.", mentions:["30 jours fin de mois"]}],
+ theo:{open:true, t:"Rappel — une facture d'achat qui cumule les difficultés", h:`
+  <table><tr><th>Élément</th><th>Traitement</th></tr>
+  <tr><td>Produit à 6 % et produit à 21 %</td><td>Deux lignes <b>6040</b> : une par taux, codes <b>6M</b> et <b>21M</b>, grille <b>81</b>.</td></tr>
+  <tr><td>Emballages <b>perdus</b></td><td>Ils sont vendus avec le produit : ce sont des marchandises, au <b>même taux que le produit</b> qu'ils accompagnent.</td></tr>
+  <tr><td>Emballages <b>consignés</b></td><td>On les rendra et on sera remboursé : c'est une <b>créance</b>, compte <b>4050</b> au débit, code <b>EX</b>, sans T.V.A.</td></tr>
+  <tr><td>Transport</td><td>Il suit la marchandise. S'il concerne des produits à 6 % et à 21 %, on l'ajoute au produit dont le taux est le <b>plus bas</b>.</td></tr>
+  <tr><td>Escompte conditionnel</td><td>La T.V.A. est calculée sur la base <b>escompte déduit</b>, mais on encode la base <b>entière</b> (l'escompte n'est pris qu'au paiement). Dans Popsy, on sélectionne l'escompte dans l'en-tête.</td></tr></table>`},
+ exp:`<b>6040 à 6 %</b> = produit A 800 + emballages perdus A 40 + transport 250 = <b>1.090,00</b> (6M) ; <b>6040 à 21 %</b> = produit B <b>22.000,00</b> (21M). Les emballages consignés (55,00) vont au <b>4050</b> avec le code EX. La T.V.A. de la facture (4.591,69) est déjà calculée escompte déduit : on la reprend telle quelle au 4110. Dans Popsy, l'escompte de 2 % est sélectionné dans l'en-tête et Popsy isole lui-même la part d'escompte (code 0).`,
+ jx:[{j:"ACHAT", d:"02/09/XX", t:"Facture n° 556 — ALL SIGN",
+   hint:"Regroupe d'abord les lignes par taux de T.V.A. : à quel produit rattaches-tu les emballages perdus et le transport ? Les emballages consignés sont-ils une charge ?",
+   l:[{c:"6040",d:"81",p:"6M",db:1090},{c:"6040",d:"81",p:"21M",db:22000},{c:"4050",p:"EX",db:55},{c:"4110",d:"59",db:4591.69},{c:"4400",cr:27736.69}]}]},
+
+/* ============ 3 ============ */
+{n:3, ch:CH_B, page:"page 2 (2e journal)", t:"Facture 699 — VOLUME BUREAU : investissement et cocontractant",
+ docs:[{t:"fac", num:"699", date:"06/09/XX", ech:"15/10/XX", de:VOLBUR, a:OUT,
+   lignes:[{q:"1", des:"Installation d'un comptoir (comptoir et main-d'œuvre)", pu:"5.340,00", mt:"5.340,00"}],
+   rem:[{lib:"Remise exceptionnelle", mt:"-534,00"}],
+   ht:"4.806,00", tva:[{taux:"21 %", base:"4.806,00", mt:"0,00"}], ttva:"0,00", pay:"4.806,00",
+   legal:"Taxe à acquitter par le cocontractant — A.R. n° 1, art. 20.", mentions:["Escompte 3 % si paiement dans les 8 jours"]}],
+ theo:{open:true, t:"Rappel — investissement acheté sous le régime du cocontractant", h:`
+  <p><b>Investissement ?</b> Un comptoir installé durablement n'est ni une marchandise revendue ni un service consommé : c'est une <b>immobilisation</b> (classe 2), grille <b>83</b>.</p>
+  <p><b>Cocontractant ?</b> La facture ne contient pas de T.V.A. et porte la mention « taxe à acquitter par le cocontractant » : c'est un travail immobilier. OUTISUD <b>autoliquide</b> :</p>
+  <ul><li>T.V.A. due → <b>4513</b>, grille <b>56</b> ;</li><li>la même T.V.A., déductible → <b>4110</b>, grille <b>59</b> ;</li>
+  <li>la base porte deux grilles : la nature (<b>83</b>) + le régime cocontractant (<b>87</b>) ; code Popsy <b>21CV</b>.</li></ul>
+  <p>Escompte : comme toujours, la T.V.A. (ici autoliquidée) se calcule sur la base <b>escompte déduit</b>.</p>`},
+ exp:`Base : <b>2300</b> Installations, machines et outillage, 4.806,00 (remise déjà déduite), grilles <b>83+87</b>, code <b>21CV</b>. T.V.A. autoliquidée sur la base escompte déduit : 4.806 − 3 % = 4.661,82 → × 21 % = <b>978,98</b>, à la fois au 4110 (59) et au 4513 (56). Le fournisseur reçoit 4.806,00. L'opération est neutre pour la T.V.A.`,
+ jx:[{j:"ACHAT", d:"06/09/XX", t:"Facture n° 699 — VOLUME BUREAU",
+   hint:"Le comptoir va-t-il être revendu ou consommé ? La facture ne mentionne pas de T.V.A. : qui doit la calculer, et sur quelle base, compte tenu de l'escompte ?",
+   l:[{c:"2300",d:"83+87",p:"21CV",db:4806},{c:"4110",d:"59",db:978.98},{c:"4513",d:"56",cr:978.98},{c:"4400",cr:4806}]}]},
+
+/* ============ 4 ============ */
+{n:4, ch:CH_B, page:"page 3 (1er journal)", t:"Note de crédit 3 — COTUBEX : retour et remise obtenue",
+ docs:[{t:"nc", num:"3", date:"20/09/XX", de:COTUBEX, a:OUT,
+   lignes:[{q:"1", des:"Remise spéciale sur A 20 %", pu:"20,00", mt:"20,00"},{q:"5", des:"Retour produit B", pu:"2.000,00", mt:"10.000,00"}],
+   ht:"10.020,00", tva:[{taux:"6 %", base:"20,00", mt:"1,20"},{taux:"21 %", base:"10.000,00", mt:"2.100,00"}], ttva:"2.101,20", pay:"12.121,20"}],
+ theo:{open:true, t:"Rappel — la note de crédit reçue d'un fournisseur", h:`
+  <p>Une note de crédit fait <b>l'inverse</b> d'une facture : le fournisseur est <b>débité</b> (on lui doit moins), les achats sont <b>crédités</b>.</p>
+  <table><tr><th>Élément</th><th>Compte</th><th>Grille</th></tr>
+  <tr><td>Retour de marchandises</td><td>6040 au crédit</td><td>81(-) + 85</td></tr>
+  <tr><td>Remise, ristourne, rabais obtenu</td><td>6080 au crédit</td><td>81(-) + 85</td></tr>
+  <tr><td>T.V.A. à rendre à l'État</td><td>4514 au crédit</td><td>63</td></tr>
+  <tr><td>Fournisseur</td><td>4400 au débit</td><td>—</td></tr></table>
+  <p>Le code Popsy dépend du taux : <b>6M</b> ou <b>21M</b>, comme sur une facture.</p>`},
+ exp:`La remise sur le produit A (6 %) va au <b>6080</b> (20,00, code 6M) ; le retour du produit B (21 %) au <b>6040</b> (10.000,00, code 21M), tous deux au crédit avec les grilles <b>81(-)+85</b>. La T.V.A. à reverser (1,20 + 2.100,00 = <b>2.101,20</b>) passe au <b>4514</b>, grille 63. Le fournisseur est débité de 12.121,20.`,
+ jx:[{j:"ACHAT", d:"20/09/XX", t:"Note de crédit n° 3 — COTUBEX (journal NA1)",
+   hint:"Une remise obtenue et un retour de marchandises n'utilisent pas le même compte. Et le fournisseur, on lui doit plus ou moins qu'avant ?",
+   l:[{c:"6080",d:"81(-)+85",p:"6M",cr:20},{c:"6040",d:"81(-)+85",p:"21M",cr:10000},{c:"4514",d:"63",cr:2101.20},{c:"4400",db:12121.20}]}]},
+
+/* ============ 5 ============ */
+{n:5, ch:CH_B, page:"page 3 (2e journal)", t:"Note de crédit 3 — LATOURE : note de crédit intracommunautaire",
+ docs:[{t:"nc", num:"3", date:"20/09/XX", de:LATOURE, a:OUT,
+   lignes:[{q:"30", des:"Retour produit A", pu:"50,00", mt:"1.500,00"},{q:"10", des:"Retour emballage (consigné)", pu:"5,00", mt:"50,00"},
+           {q:"15", des:"Remise sur produit B", pu:"10,00", mt:"150,00"}],
+   ht:"1.700,00", tva:[], ttva:"0,00", pay:"1.700,00",
+   legal:"Opération intracommunautaire — aucune T.V.A. facturée par le fournisseur."}],
+ theo:{open:true, t:"Rappel — la note de crédit d'un fournisseur européen", h:`
+  <p>Lors de l'achat intracommunautaire, OUTISUD avait <b>autoliquidé</b> la T.V.A. : une T.V.A. due (4511) et la même T.V.A. déductible. La note de crédit <b>annule une partie</b> de cette autoliquidation, dans l'autre sens :</p>
+  <ul><li>la T.V.A. <b>due</b> diminue → <b>4511 au débit</b> ;</li><li>la T.V.A. <b>déductible</b> diminue → compte de T.V.A. déductible I.C. <b>au crédit</b> ;</li>
+  <li>les bases sont créditées avec les grilles <b>81(-) + 84</b> (84 = notes de crédit sur opérations intracommunautaires) ;</li>
+  <li>codes Popsy <b>6IM</b> / <b>21IM</b> selon le taux belge du produit ; l'emballage consigné rendu → 4050 au crédit, code EX.</li></ul>
+  <p>Comme pour l'achat, l'effet net sur la T.V.A. est <b>nul</b>.</p>`},
+ exp:`Retour du produit A (6 %) : <b>6040</b> crédit 1.500,00, code 6IM. Remise sur B (21 %) : <b>6080</b> crédit 150,00, code 21IM. Emballages rendus : <b>4050</b> crédit 50,00 (EX). T.V.A. autoliquidée annulée : 1.500 × 6 % + 150 × 21 % = <b>121,50</b>, au crédit du <b>4111</b> (grille 63) et au débit du <b>4511</b> (grille 64). Le fournisseur est débité de 1.700,00. <i>Variantes acceptées : 4110 ou 4514 à la place du 4111.</i>`,
+ jx:[{j:"ACHAT", d:"20/09/XX", t:"Note de crédit n° 3 — LATOURE (journal NA1)",
+   hint:"Reprends le raisonnement d'un achat intracommunautaire et inverse chaque ligne. Le produit A et le produit B n'ont pas le même taux belge.",
+   l:[{c:"6040",d:"81(-)+84",p:"6IM",cr:1500},{c:"4050",p:"EX",cr:50},{c:"6080",d:"81(-)+84",p:"21IM",cr:150},
+      {c:"4111",d:"63",dAlt:["63","59"],cr:121.50},{c:"4511",d:"64",dAlt:["64","55"],db:121.50},{c:"4400",db:1700}],
+   altAcc:{"4111":["4110","4514"]}}]},
+
+/* ============ 6 ============ */
+{n:6, ch:CH_B, page:"page 4 (1er journal)", t:"Facture 1569 — LATOURE : acquisition intracommunautaire avec escompte",
+ docs:[{t:"fac", num:"1569", date:"15/09/XX", ech:"30 jours nets", de:LATOURE, a:OUT,
+   lignes:[{q:"10", des:"Produit A", pu:"100,00", mt:"1.000,00"},{q:"5", des:"Produit B", pu:"2.000,00", mt:"10.000,00"},
+           {q:"10", des:"Emballage consigné produit A", pu:"5,00", mt:"50,00"},{q:"5", des:"Emballage perdu produit B", pu:"5,00", mt:"25,00"},
+           {q:"1", des:"Transport", pu:"75,00", mt:"75,00"}],
+   ht:"11.150,00", tva:[], ttva:"0,00", pay:"11.150,00",
+   legal:"Livraison intracommunautaire — T.V.A. due par le preneur.", mentions:["Paiement 30 jours nets","Escompte 2 % à déduire si paiement au comptant"]}],
+ theo:{open:true, t:"Rappel — l'acquisition intracommunautaire (A.I.C.)", h:`
+  <p>Le fournisseur français facture <b>sans T.V.A.</b> : c'est OUTISUD qui <b>autoliquide</b> la T.V.A. belge, au taux belge de chaque produit.</p>
+  <table><tr><th>Compte</th><th>Sens</th><th>Grille</th></tr>
+  <tr><td>6040 — achats (une ligne par taux)</td><td>Débit</td><td>81 + 86</td></tr>
+  <tr><td>T.V.A. déductible I.C.</td><td>Débit</td><td>59</td></tr>
+  <tr><td>4511 — T.V.A. due I.C.</td><td>Crédit</td><td>55</td></tr>
+  <tr><td>4400 — fournisseur</td><td>Crédit</td><td>—</td></tr></table>
+  <p>Codes Popsy : <b>6IM</b> et <b>21IM</b>. Les règles de la facture belge restent valables : emballage perdu = même taux que son produit, emballage consigné = 4050 (EX), transport au taux le plus bas, T.V.A. calculée <b>escompte déduit</b>.</p>`},
+ exp:`<b>6040 à 6 %</b> = produit A 1.000 + transport 75 = <b>1.075,00</b> (6IM) ; <b>6040 à 21 %</b> = produit B 10.000 + emballage perdu B 25 = <b>10.025,00</b> (21IM) ; <b>4050</b> = 50,00 (EX). T.V.A. autoliquidée escompte déduit : 1.053,50 × 6 % + 9.824,50 × 21 % = <b>2.126,36</b>, au débit du <b>4111</b> (59) et au crédit du <b>4511</b> (55). <i>Variante acceptée : 4110 à la place du 4111.</i>`,
+ jx:[{j:"ACHAT", d:"15/09/XX", t:"Facture n° 1569 — LATOURE (France)",
+   hint:"Pas de T.V.A. sur la facture : qui la calcule ? Classe chaque ligne par taux (l'emballage perdu suit son produit) et n'oublie pas l'escompte dans le calcul de la T.V.A.",
+   l:[{c:"6040",d:"81+86",p:"6IM",db:1075},{c:"6040",d:"81+86",p:"21IM",db:10025},{c:"4050",p:"EX",db:50},
+      {c:"4111",d:"59",db:2126.36},{c:"4511",d:"55",cr:2126.36},{c:"4400",cr:11150}],
+   altAcc:{"4111":["4110"]}}]},
+
+/* ============ 7 ============ */
+{n:7, ch:CH_C, page:"page 4 (2e journal)", t:"Facture 1 — HARDY Anna : vente à deux taux",
+ docs:[{t:"fac", num:"1", date:"12/09/XX", ech:"30 jours nets", de:OUT, a:HARDY,
+   lignes:[{q:"1", des:"Produit A", pu:"250,00", mt:"250,00"},{q:"1", des:"Produit B", pu:"4.300,00", mt:"4.300,00"}],
+   ht:"4.550,00", tva:[{taux:"6 %", base:"250,00", mt:"15,00"},{taux:"21 %", base:"4.300,00", mt:"903,00"}], ttva:"918,00", pay:"5.468,00"}],
+ theo:{t:"Rappel — la facture de vente", h:`
+  <ul><li><b>4000</b> client au débit, montant T.V.A.C.</li>
+  <li><b>7000</b> au crédit, une ligne par taux : grille <b>01</b> / code <b>6</b> pour 6 %, grille <b>03</b> / code <b>21</b> pour 21 %.</li>
+  <li><b>4510</b> T.V.A. à payer au crédit, grille <b>54</b>.</li></ul>`},
+ exp:`Deux lignes de vente : 250,00 à 6 % (01 / 6) et 4.300,00 à 21 % (03 / 21). La T.V.A. totale (918,00) va au 4510, grille 54. Le client doit 5.468,00.`,
+ jx:[{j:"VENTE", d:"12/09/XX", t:"Facture n° 1 — HARDY Anna",
+   hint:"Chaque taux de T.V.A. a sa propre grille de vente. Le client doit-il le montant hors T.V.A. ou T.V.A. comprise ?",
+   l:[{c:"4000",db:5468},{c:"7000",d:"01",p:"6",cr:250},{c:"7000",d:"03",p:"21",cr:4300},{c:"4510",d:"54",cr:918}]}]},
+
+/* ============ 8 ============ */
+{n:8, ch:CH_C, page:"page 5 (1er journal)", t:"Facture 2 — LEJEUNE : vente avec escompte",
+ docs:[{t:"fac", num:"2", date:"26/09/XX", ech:"45 jours", de:OUT, a:LEJEUNE,
+   lignes:[{q:"2", des:"Produit A", pu:"180,00", mt:"360,00"},{q:"2", des:"Produit B", pu:"4.300,00", mt:"8.600,00"}],
+   ht:"8.960,00", escompte:{lib:"Base T.V.A. après escompte de 2 % (179,20 €)", base:"8.780,80"},
+   tva:[{taux:"6 %", base:"352,80", mt:"21,17"},{taux:"21 %", base:"8.428,00", mt:"1.769,88"}], ttva:"1.791,05", pay:"10.751,05",
+   mentions:["Escompte de 179,20 € si paiement avant le 02/10"]}],
+ theo:{t:"Rappel — l'escompte côté vendeur", h:`
+  <p>Même règle qu'à l'achat : la T.V.A. est calculée <b>escompte déduit</b>, mais la vente s'encode pour la <b>base entière</b>. Le client doit le total de la facture.</p>
+  <p>Dans Popsy, l'escompte est sélectionné dans l'en-tête ; Popsy isole la part d'escompte avec le code <b>999</b>.</p>`},
+ exp:`Ventes : 360,00 (01 / 6) et 8.600,00 (03 / 21), c'est-à-dire les bases <b>entières</b>. T.V.A. de la facture, calculée escompte déduit : <b>1.791,05</b>. Client : 10.751,05.`,
+ jx:[{j:"VENTE", d:"26/09/XX", t:"Facture n° 2 — LEJEUNE",
+   hint:"Les bases de T.V.A. imprimées sont réduites de l'escompte. Quel montant de vente encodes-tu pour chaque produit ?",
+   l:[{c:"4000",db:10751.05},{c:"7000",d:"01",p:"6",cr:360},{c:"7000",d:"03",p:"21",cr:8600},{c:"4510",d:"54",cr:1791.05}]}]},
+
+/* ============ 9 ============ */
+{n:9, ch:CH_C, page:"page 5 (2e journal)", t:"Note de crédit 1 — PRELAT : ristourne et retour",
+ docs:[{t:"nc", num:"1", date:"06/09/XX", de:OUT, a:PRELAT,
+   lignes:[{q:"8", des:"Ristourne 5 % sur A", pu:"10,00", mt:"80,00"},{q:"5", des:"Retour marchandise B", pu:"4.300,00", mt:"21.500,00"}],
+   ht:"21.580,00", tva:[{taux:"6 %", base:"80,00", mt:"4,80"},{taux:"21 %", base:"21.500,00", mt:"4.515,00"}], ttva:"4.519,80", pay:"26.099,80"}],
+ theo:{t:"Rappel — la note de crédit émise vers un client", h:`
+  <ul><li>Retour de marchandises → <b>7000 au débit</b> ; ristourne, remise, rabais accordé → <b>7080 au débit</b> ; grille <b>49</b>, code selon le taux.</li>
+  <li>T.V.A. que l'État nous rend → <b>4114 au débit</b>, grille <b>64</b>.</li>
+  <li>Client → <b>4000 au crédit</b> (il nous doit moins).</li></ul>`},
+ exp:`Ristourne sur A : <b>7080</b> débit 80,00 (49 / 6). Retour de B : <b>7000</b> débit 21.500,00 (49 / 21). T.V.A. : <b>4114</b> débit 4.519,80 (64). Client crédité de 26.099,80.`,
+ jx:[{j:"VENTE", d:"06/09/XX", t:"Note de crédit n° 1 — PRELAT (journal NV1)",
+   hint:"Une ristourne accordée et un retour de marchandises n'utilisent pas le même compte de la classe 7.",
+   l:[{c:"7080",d:"49",p:"6",db:80},{c:"7000",d:"49",p:"21",db:21500},{c:"4114",d:"64",db:4519.80},{c:"4000",cr:26099.80}]}]},
+
+/* ============ 10 ============ */
+{n:10, ch:CH_C, page:"page 6 (1er journal)", t:"Facture 3 — A.V.I. : emballages et transport",
+ docs:[{t:"fac", num:"3", date:"10/09/XX", ech:"15 jours date de facture", de:OUT, a:AVI,
+   lignes:[{q:"1", des:"Produit A", pu:"200,00", mt:"200,00"},{q:"2", des:"Produit B", pu:"4.000,00", mt:"8.000,00"},
+           {q:"3", des:"Caution emballages", pu:"50,00", mt:"150,00"},{q:"1", des:"Emballage perdu A", pu:"20,00", mt:"20,00"},
+           {q:"1", des:"Transport", pu:"120,00", mt:"120,00"}],
+   ht:"8.490,00", tva:[{taux:"6 %", base:"340,00", mt:"20,40"},{taux:"21 %", base:"8.000,00", mt:"1.680,00"}], ttva:"1.700,40", pay:"10.190,40"}],
+ theo:{t:"Rappel — emballages consignés côté vendeur", h:`
+  <p>La caution d'emballages sera <b>remboursée</b> au client quand il rendra les emballages : c'est une <b>dette</b>, compte <b>4450</b> au crédit, code <b>EX</b>, sans T.V.A.</p>
+  <p>Emballage perdu et transport suivent les mêmes règles qu'à l'achat (même taux que le produit ; transport au taux le plus bas).</p>`},
+ exp:`Vente à 6 % : 200 + 20 + 120 = <b>340,00</b> ; vente à 21 % : <b>8.000,00</b> ; caution : <b>4450</b> 150,00 (EX) ; T.V.A. 1.700,40 ; client 10.190,40.`,
+ jx:[{j:"VENTE", d:"10/09/XX", t:"Facture n° 3 — A.V.I.",
+   hint:"La caution d'emballages est-elle un produit pour OUTISUD ou une somme qu'elle devra rendre ?",
+   l:[{c:"4000",db:10190.40},{c:"7000",d:"01",p:"6",cr:340},{c:"7000",d:"03",p:"21",cr:8000},{c:"4450",p:"EX",cr:150},{c:"4510",d:"54",cr:1700.40}]}]},
+
+/* ============ 11 ============ */
+{n:11, ch:CH_C, page:"page 6 (2e journal)", t:"Facture 4 — A.V.I. : transport d'un seul produit et escompte",
+ docs:[{t:"fac", num:"4", date:"14/09/XX", ech:"1 mois", de:OUT, a:AVI,
+   lignes:[{q:"1", des:"Produit A", pu:"200,00", mt:"200,00"},{q:"3", des:"Produit B", pu:"4.000,00", mt:"12.000,00"},
+           {q:"1", des:"Transport produit B", pu:"120,00", mt:"120,00"},{q:"3", des:"Caution emballages B", pu:"50,00", mt:"150,00"}],
+   ht:"12.470,00", escompte:{lib:"Base T.V.A. après escompte de 2 %", base:"12.073,60"},
+   tva:[{taux:"6 %", base:"196,00", mt:"11,76"},{taux:"21 %", base:"11.877,60", mt:"2.494,30"}], ttva:"2.506,06", pay:"14.976,06",
+   mentions:["À déduire 2 % d'escompte si paiement dans les 8 jours"]}],
+ theo:{t:"Rappel — transport et escompte", h:`
+  <p>Quand le transport ne concerne <b>qu'un seul produit</b>, il prend le taux de ce produit.</p>
+  <p>Escompte : vente encodée pour la base entière, T.V.A. reprise de la facture (calculée escompte déduit).</p>`},
+ exp:`Vente à 6 % : <b>200,00</b> ; vente à 21 % : 12.000 + 120 (transport du produit B) = <b>12.120,00</b> ; caution <b>4450</b> 150,00 ; T.V.A. 2.506,06 ; client 14.976,06.`,
+ jx:[{j:"VENTE", d:"14/09/XX", t:"Facture n° 4 — A.V.I.",
+   hint:"Le transport concerne ici un seul produit : lequel, et à quel taux ?",
+   l:[{c:"4000",db:14976.06},{c:"7000",d:"01",p:"6",cr:200},{c:"7000",d:"03",p:"21",cr:12120},{c:"4450",p:"EX",cr:150},{c:"4510",d:"54",cr:2506.06}]}]},
+
+/* ============ 12 ============ */
+{n:12, ch:CH_C, page:"page 7 (1er journal)", t:"Note de crédit 2 — A.V.I. : ristourne, retour et emballages",
+ docs:[{t:"nc", num:"2", date:"14/09/XX", de:OUT, a:AVI,
+   lignes:[{q:"5", des:"Ristourne 2 % sur B", pu:"400,00", mt:"2.000,00"},{q:"1", des:"Retour A", pu:"180,00", mt:"180,00"},
+           {q:"5", des:"Retour emballage consigné produit B", pu:"50,00", mt:"250,00"}],
+   ht:"2.430,00", tva:[{taux:"6 %", base:"180,00", mt:"10,80"},{taux:"21 %", base:"2.000,00", mt:"420,00"}], ttva:"430,80", pay:"2.860,80"}],
+ theo:{t:"Rappel — emballages consignés rendus par le client", h:`
+  <p>Quand le client rend les emballages, OUTISUD ne lui doit plus la caution : la dette <b>4450</b> diminue → <b>débit</b>, code EX, sans T.V.A.</p>
+  <p>Le reste suit la note de crédit émise : 7080 (ristourne) ou 7000 (retour) au débit, grille 49 ; 4114 au débit, grille 64 ; 4000 au crédit.</p>`},
+ exp:`Ristourne sur B : <b>7080</b> débit 2.000,00 (49 / 21) ; retour de A : <b>7000</b> débit 180,00 (49 / 6) ; emballages rendus : <b>4450</b> débit 250,00 (EX) ; T.V.A. <b>4114</b> 430,80 (64) ; client crédité de 2.860,80.`,
+ jx:[{j:"VENTE", d:"14/09/XX", t:"Note de crédit n° 2 — A.V.I. (journal NV1)",
+   hint:"Attention aux taux : la ristourne porte sur B, le retour sur A. Et la caution que tu avais mise au 4450 lors de la vente ?",
+   l:[{c:"7080",d:"49",p:"21",db:2000},{c:"7000",d:"49",p:"6",db:180},{c:"4450",p:"EX",db:250},{c:"4114",d:"64",db:430.80},{c:"4000",cr:2860.80}]}]},
+
+/* ============ 13 ============ */
+{n:13, ch:CH_C, page:"page 7 (2e journal)", t:"Facture 5 — KRIDOTRUST : livraison intracommunautaire",
+ docs:[{t:"fac", num:"5", date:"13/09/XX", ech:"30 jours fin de mois", de:OUT, a:KRIDO,
+   lignes:[{q:"10", des:"Produit B", pu:"3.800,00", mt:"38.000,00"},{q:"10", des:"Emballage consigné", pu:"50,00", mt:"500,00"}],
+   ht:"38.500,00", tva:[], ttva:"0,00", pay:"38.500,00", legal:"Livraison intracommunautaire exonérée — art. 39bis C.T.V.A."}],
+ theo:{t:"Rappel — la livraison intracommunautaire", h:`
+  <p>Vente à un client assujetti d'un autre État membre : <b>pas de T.V.A.</b>, grille <b>46</b>, code <b>I0</b>. Les emballages consignés restent au <b>4450</b> (EX).</p>`},
+ exp:`<b>7000</b> crédit 38.000,00 (46 / I0), <b>4450</b> crédit 500,00 (EX), client 38.500,00. Aucune ligne 4510.`,
+ jx:[{j:"VENTE", d:"13/09/XX", t:"Facture n° 5 — KRIDOTRUST (Luxembourg)",
+   hint:"Aucune T.V.A. : quelle grille distingue cette vente d'une vente belge ?",
+   l:[{c:"4000",db:38500},{c:"7000",d:"46",p:"I0",cr:38000},{c:"4450",p:"EX",cr:500}]}]},
+
+/* ============ 14 ============ */
+{n:14, ch:CH_C, page:"page 8 (1er journal)", t:"Facture 6 — LEJEUNE : prestation au cocontractant",
+ docs:[{t:"fac", num:"6", date:"26/09/XX", ech:"Paiement comptant", de:OUT, a:LEJEUNE,
+   lignes:[{q:"1", des:"Installation réseau sur bâtiment à Soignies", pu:"4.250,00", mt:"4.250,00"}],
+   ht:"4.250,00", tva:[], ttva:"0,00", pay:"4.250,00", legal:"Taxe à acquitter par le cocontractant."}],
+ theo:{t:"Rappel — le cocontractant côté vendeur", h:`
+  <p>Travail immobilier pour un client assujetti : OUTISUD ne facture <b>aucune T.V.A.</b> et n'a donc pas de ligne 4510. Compte de produit : prestation de services <b>7070</b>, grille <b>45</b>, code <b>C0</b>.</p>`},
+ exp:`Deux lignes seulement : <b>4000</b> débit 4.250,00 et <b>7070</b> crédit 4.250,00 (45 / C0).`,
+ jx:[{j:"VENTE", d:"26/09/XX", t:"Facture n° 6 — LEJEUNE",
+   hint:"Est-ce une vente de marchandises ou une prestation ? Qui paiera la T.V.A. ?",
+   l:[{c:"4000",db:4250},{c:"7070",d:"45",p:"C0",cr:4250}]}]},
+
+/* ============ 15 ============ */
+{n:15, ch:CH_C, page:"page 8 (2e journal)", t:"Note de crédit 3 — KRIDOTRUST : note de crédit intracommunautaire",
+ docs:[{t:"nc", num:"3", date:"25/09/XX", de:OUT, a:KRIDO,
+   lignes:[{q:"1", des:"Retour produit B", pu:"3.800,00", mt:"3.800,00"},{q:"5", des:"Retour emballage consigné", pu:"50,00", mt:"250,00"}],
+   ht:"4.050,00", tva:[], ttva:"0,00", pay:"4.050,00"}],
+ theo:{t:"Rappel — la note de crédit sur une livraison intracommunautaire", h:`
+  <p>Elle ne va pas en grille 49 mais en grille <b>48</b> (notes de crédit sur les opérations des grilles 44 et 46). Code Popsy <b>I0</b>. Pas de T.V.A.</p>`},
+ exp:`<b>7000</b> débit 3.800,00 (48 / I0), <b>4450</b> débit 250,00 (EX), client crédité de 4.050,00.`,
+ jx:[{j:"VENTE", d:"25/09/XX", t:"Note de crédit n° 3 — KRIDOTRUST (journal NV1)",
+   hint:"La vente d'origine était en grille 46 : quelle grille reçoit les notes de crédit qui s'y rapportent ?",
+   l:[{c:"7000",d:"48",p:"I0",db:3800},{c:"4450",p:"EX",db:250},{c:"4000",cr:4050}]}]},
+
+/* ============ 16 ============ */
+{n:16, ch:CH_C, page:"page 9", t:"Facture 7 — MONCOUSIN : ristourne, emballages, transport et escompte",
+ docs:[{t:"fac", num:"7", date:"21/09/XX", ech:"30 jours fin de mois", de:OUT, a:MONC,
+   lignes:[{q:"2", des:"Produit A", pu:"200,00", mt:"400,00"},{q:"4", des:"Produit B", pu:"5.000,00", mt:"20.000,00"},
+           {q:"4", des:"Ristourne sur B", pu:"-500,00", mt:"-2.000,00"},{q:"2", des:"Emballage perdu sur A", pu:"50,00", mt:"100,00"},
+           {q:"4", des:"Caution emballages produit B", pu:"50,00", mt:"200,00"},{q:"1", des:"Transport de l'ensemble", pu:"450,00", mt:"450,00"}],
+   ht:"19.150,00", escompte:{lib:"Base T.V.A. après escompte de 2 %", base:"18.571,00"},
+   tva:[{taux:"6 %", base:"931,00", mt:"55,86"},{taux:"21 %", base:"17.640,00", mt:"3.704,40"}], ttva:"3.760,26", pay:"22.910,26",
+   mentions:["Escompte de 2 % si paiement dans les 8 jours"]}],
+ theo:{t:"Rappel — ristourne sur la facture", h:`
+  <p>Une ristourne qui figure <b>sur la facture</b> est déjà déduite : on encode la vente <b>nette</b>, sans compte 7080.</p>
+  <p>Transport « de l'ensemble » (produits à 6 % et à 21 %) → au taux le plus bas.</p>`},
+ exp:`Vente à 6 % : 400 + 100 + 450 = <b>950,00</b> ; vente à 21 % : 20.000 − 2.000 = <b>18.000,00</b> ; caution <b>4450</b> 200,00 ; T.V.A. 3.760,26 ; client 22.910,26.`,
+ jx:[{j:"VENTE", d:"21/09/XX", t:"Facture n° 7 — MONCOUSIN",
+   hint:"La ristourne est sur la facture : faut-il un compte séparé ? Le transport concerne-t-il un seul produit ou l'ensemble ?",
+   l:[{c:"4000",db:22910.26},{c:"7000",d:"01",p:"6",cr:950},{c:"7000",d:"03",p:"21",cr:18000},{c:"4450",p:"EX",cr:200},{c:"4510",d:"54",cr:3760.26}]}]},
+
+/* ============ 17 ============ */
+{n:17, ch:CH_D, page:"page 10 (1er journal)", t:"Feuille de caisse 1 — septembre",
+ docs:[DOC_CAISSE1],
+ theo:{open:true, t:"Rappel — le journal de caisse", h:`
+  <ul><li>Un client paie en espèces → le client (4000) est <b>crédité</b>.</li>
+  <li>OUTISUD paie un fournisseur → le fournisseur (4400) est <b>débité</b>.</li>
+  <li>Le compte <b>5700</b> reçoit la différence entre les recettes et les dépenses de la feuille (une seule ligne).</li>
+  <li>Aucun code T.V.A. dans un journal financier.</li></ul>
+  <p><i>Variante acceptée en début d'année : une ligne de caisse par opération.</i></p>`},
+ exp:`Valentin (4000) crédit 6.500,00 ; Cotubex (4400) débit 65,00 ; Volume Bureau (4400) débit 4.806,00 ; caisse <b>5700</b> débit 1.629,00 (= 6.500 − 65 − 4.806).`,
+ jx:[{j:"CAISSE", d:"20/09/XX", t:"Feuille de caisse n° 1 (journal CAISS)",
+   hint:"Qui a donné de l'argent à OUTISUD et à qui OUTISUD en a-t-elle donné ? La caisse a-t-elle augmenté ou diminué sur la feuille ?",
+   l:[{c:"4000",cr:6500},{c:"4400",db:65},{c:"4400",db:4806},{c:"5700",db:1629}], split:"5700"}]},
+
+/* ============ 18 ============ */
+{n:18, ch:CH_D, page:"page 10 (2e journal)", t:"Feuille de caisse 2 — septembre",
+ docs:[{t:"caisse", num:"2", mois:"Septembre", init:"3.129,00", fin:"3.130,00",
+   ops:[{d:"21/09/XX", lib:"Kridotrust", rec:"788,00"},{d:"25/09/XX", lib:"La rosée", dep:"287,00"},{d:"26/09/XX", lib:"Transfert banque", dep:"500,00"}]}],
+ theo:{t:"Rappel — le virement interne", h:`
+  <p>De l'argent qui passe de la caisse à la banque ne quitte pas l'entreprise. On passe par le compte d'attente <b>5800 Virements internes</b> : débité en caisse, puis crédité quand l'argent arrive sur l'extrait. Son solde revient à zéro.</p>`},
+ exp:`Kridotrust (4000) crédit 788,00 ; La Rosée (4400) débit 287,00 ; <b>5800</b> débit 500,00 ; caisse <b>5700</b> débit 1,00 (= 788 − 287 − 500).`,
+ jx:[{j:"CAISSE", d:"26/09/XX", t:"Feuille de caisse n° 2 (journal CAISS)",
+   hint:"Le transfert vers la banque n'est ni un client ni un fournisseur : quel compte d'attente utilise-t-on ?",
+   l:[{c:"4000",cr:788},{c:"4400",db:287},{c:"5800",db:500},{c:"5700",db:1}], split:"5700"}]},
+
+/* ============ 19 ============ */
+{n:19, ch:CH_D, page:"page 11 (1er journal)", t:"Extrait de banque n° 1",
+ docs:[{t:"note", titre:"Remarque", html:"Tous les paiements fournisseurs sont réalisés par Isabel : il n'y a pas lieu de comptabiliser d'écriture en O.D. pour les virements fournisseurs."}, DOC_EXT1],
+ theo:{open:true, t:"Rappel — le journal financier", h:`
+  <ul><li>Un seul document par extrait, daté de la date d'émission de l'extrait.</li>
+  <li>Virement reçu d'un client → 4000 au crédit ; virement vers un fournisseur → 4400 au débit.</li>
+  <li>Le compte <b>5500</b> n'apparaît qu'une fois, pour le total net de l'extrait.</li></ul>
+  <p><i>Variante acceptée en début d'année : une ligne de banque par opération.</i></p>`},
+ exp:`Lejeune crédit 31.115,00 ; Hardy crédit 5.468,00 ; Ridec débit 1.654,00 ; All Sign débit 27.736,69 ; banque <b>5500</b> débit 7.192,31 (= 19.692,31 − 12.500,00).`,
+ jx:[{j:"FINANCIER", d:"20/09/XX", t:"Extrait n° 1 (journal FIN1)",
+   hint:"Pour la ligne de banque, compare l'ancien et le nouveau solde de l'extrait.",
+   l:[{c:"4000",cr:31115},{c:"4000",cr:5468},{c:"4400",db:1654},{c:"4400",db:27736.69},{c:"5500",db:7192.31}], split:"5500"}]},
+
+/* ============ 20 ============ */
+{n:20, ch:CH_D, page:"page 11 (2e journal)", t:"Extrait de banque n° 2",
+ docs:[{t:"ext", num:"2", compte:"12-4567890-02", ancD:"20/09/XX", ancS:"19.692,31",
+   ops:[{d:"21/09/XX", lib:"Virement vers Garage ZEBRA fact. 912", mt:"-1.500,00"},{d:"21/09/XX", lib:"Virement vers ALL SIGN", mt:"-4.861,00"},
+        {d:"23/09/XX", lib:"Virement vers Belgacom fact. 19", mt:"-1.478,00"},{d:"25/09/XX", lib:"Virement Avi fact. 3", mt:"10.190,40"},
+        {d:"28/09/XX", lib:"Virement Kridotrust fact. 5 et NC 3", mt:"34.450,00"},{d:"29/09/XX", lib:"Transfert de caisse", mt:"500,00"}],
+   nouD:"29/09/XX", nouS:"56.993,71"}],
+ theo:{t:"Rappel — solder le compte 5800", h:`
+  <p>Le transfert de caisse arrive enfin sur le compte : le compte <b>5800</b>, débité dans la caisse, est maintenant <b>crédité</b>. Son solde revient à zéro.</p>
+  <p>Kridotrust paie la facture 5 <b>diminuée</b> de la note de crédit 3 : une seule ligne client pour le montant reçu.</p>`},
+ exp:`Zebra 1.500,00, All Sign 4.861,00 et Belgacom 1.478,00 au débit (4400) ; AVI 10.190,40 et Kridotrust 34.450,00 au crédit (4000) ; <b>5800</b> crédit 500,00 ; banque <b>5500</b> débit 37.301,40 (= 56.993,71 − 19.692,31).`,
+ jx:[{j:"FINANCIER", d:"29/09/XX", t:"Extrait n° 2 (journal FIN1)",
+   hint:"Le transfert de caisse : quel compte d'attente avais-tu débité dans la feuille de caisse 2 ?",
+   l:[{c:"4400",db:1500},{c:"4400",db:4861},{c:"4400",db:1478},{c:"4000",cr:10190.40},{c:"4000",cr:34450},{c:"5800",cr:500},{c:"5500",db:37301.40}], split:"5500"}]}
+
+];
+
+/* Construction des variantes acceptées */
+EXOS.forEach(ex=> ex.jx.forEach(j=>{
+  j.alt = [];
+  if(j.split) j.alt.push(splitAlt(j.l, j.split));
+  if(j.altAcc) Object.keys(j.altAcc).forEach(a=> j.altAcc[a].forEach(b=>{
+    j.alt.push(j.l.map(l=> l.c===a ? Object.assign({}, l, {c:b}) : l));
+  }));
+}));
+
+
+/* ============================================================
+   ÉTAT DE L'APPLICATION
+   ============================================================ */
+const APP = {
+  email: localStorage.getItem('student_email') || '',
+  classe: localStorage.getItem('student_classe') || '',
+  cur: 0,
+  score: 0,
+  st: [],                 // état par exercice
+  grid: [],               // saisies de l'élève (persistantes)
+  globalTimerStart: null,
+  globalTimerInterval: null,
+  exerciseStartTime: null,
+  scoreBeforeExercise: 0,
+  sent: new Set()
+};
+
+const PTS_JOURNAL = 10;
+
+function initState(){
+  APP.st = EXOS.map(ex => ({
+    tries: ex.jx.map(()=>0),
+    stat:  ex.jx.map(()=>'todo'),   // todo | ok | shown
+    cat:   ex.jx.map(()=>null),     // 'first' | 'retry' | 'shown'
+    pts: 0, done:false, skipped:false, sent:false
+  }));
+  APP.grid = EXOS.map(ex => ex.jx.map(()=> [emptyRow(),emptyRow(),emptyRow(),emptyRow()]));
+}
+function emptyRow(){ return {c:'',d:'',p:'',db:'',cr:''}; }
+
+/* ============================================================
+   NORMALISATION & CALCUL
+   ============================================================ */
+function isExpr(s){ return /[+\-*/×÷()]/.test(String(s).replace(/^-/,'')); }
+
+function evalExpr(raw){
+  let s = String(raw).trim();
+  if(!s) return null;
+  s = s.replace(/×/g,'*').replace(/÷/g,'/').replace(/\s/g,'').replace(/,/g,'.');
+  if(!/^[0-9.+\-*/()]+$/.test(s)) return null;
+  try{
+    const v = Function('"use strict";return ('+s+')')();
+    return (typeof v==='number' && isFinite(v)) ? v : null;
+  }catch(e){ return null; }
+}
+
+/* Convertit une saisie en nombre (gère 1.350,50 / 1350,5 / 1.350 / expressions) */
+function parseNum(raw){
+  if(raw===null || raw===undefined) return null;
+  let s = String(raw).trim();
+  if(!s) return null;
+  if(isExpr(s.replace(/^[-+]/,''))) { const v = evalExpr(s); if(v!==null) return v; }
+  s = s.replace(/\s|\u00A0|€/g,'');
+  const hasC = s.includes(','), hasP = s.includes('.');
+  if(hasC && hasP){ s = s.replace(/\./g,'').replace(',','.'); }
+  else if(hasC){ s = s.replace(',', '.'); }
+  else if(hasP){
+    const parts = s.split('.');
+    // "1.350" ou "1.350.000" => séparateur de milliers
+    if(parts.length>2 || (parts.length===2 && parts[1].length===3 && parts[0].length<=3)) s = parts.join('');
+  }
+  const v = parseFloat(s);
+  return isNaN(v) ? null : v;
+}
+
+function fmt(n){
+  if(n===null||n===undefined||n==='') return '';
+  return Number(n).toLocaleString('fr-BE',{minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function normAcc(s){ return String(s||'').replace(/[^0-9]/g,''); }
+
+function normPop(s){ return String(s||'').toUpperCase().replace(/[\s.\-_]/g,''); }
+
+function normDecl(s){
+  let x = String(s||'').toUpperCase().replace(/\s/g,'').replace(/\(\-\)/g,'-').replace(/[.;]/g,'');
+  if(!x) return '';
+  const parts = x.split('+').filter(Boolean).map(p=>{
+    const m = p.match(/^(\d+)(.*)$/);
+    if(m && m[1].length===1) return '0'+m[1]+m[2];
+    return p;
+  });
+  return parts.sort().join('+');
+}
+
+function eq(a,b){ return Math.abs(a-b) <= 0.021; }
+
+/* ============================================================
+   MOTEUR DE CORRECTION — ordre des lignes libre
+   ============================================================ */
+function correct(rows, sol){
+  const res = { ok:false, errs:[], cells:[], extra:[], missing:0, balOK:true, totD:0, totC:0 };
+
+  // 1. Préparation des lignes de l'élève
+  const used = [];
+  rows.forEach((r,i)=>{
+    const acc = normAcc(r.c), db = parseNum(r.db), cr = parseNum(r.cr);
+    const empty = !acc && db===null && cr===null && !normDecl(r.d) && !normPop(r.p);
+    if(empty) return;
+    used.push({ i, acc, decl:normDecl(r.d), pop:normPop(r.p),
+                db: db||0, cr: cr||0, rawDb:db, rawCr:cr, matched:false });
+  });
+  res.cells = rows.map(()=>({}));
+
+  if(used.length===0){
+    res.errs.push({txt:"L'écriture est vide : encode au moins une ligne avant de vérifier."});
+    return res;
+  }
+
+  // 2. Contrôles de forme
+  used.forEach(u=>{
+    if(u.rawDb!==null && u.rawCr!==null && u.rawDb!==0 && u.rawCr!==0){
+      res.cells[u.i].db = res.cells[u.i].cr = false;
+      res.errs.push({loc:u.acc||('ligne '+(u.i+1)), txt:"une même ligne ne peut pas être à la fois au débit ET au crédit."});
+    }
+    if(!u.acc){
+      res.cells[u.i].c = false;
+      res.errs.push({loc:'ligne '+(u.i+1), txt:"le numéro de compte est manquant."});
+    } else if(u.acc.length!==4){
+      res.cells[u.i].c = false;
+      res.errs.push({loc:u.acc, txt:"un compte du P.C.M.N. comporte exactement 4 chiffres."});
+    } else if(!PCMN[u.acc]){
+      res.cells[u.i].c = false;
+      res.errs.push({loc:u.acc, txt:"ce numéro de compte n'existe pas dans le plan comptable. Ouvre 📖 Plan comptable pour vérifier."});
+    }
+    if(u.acc && u.db===0 && u.cr===0){
+      res.cells[u.i].db = false;
+      res.errs.push({loc:u.acc, txt:"aucun montant n'a été encodé pour cette ligne."});
+    }
+    res.totD += u.db; res.totC += u.cr;
+  });
+
+  // 3. Appariement compte/sens/montant (3 passes)
+  const S = sol.map((s,k)=>({
+    k, acc:s.c, amount:(s.db!=null?s.db:s.cr), sens:(s.db!=null?'D':'C'),
+    decl: (s.dAlt || [s.d||'']).map(normDecl),
+    pop:  (s.pAlt || [s.p||'']).map(normPop),
+    matched:false, row:null
+  }));
+
+  const sensOf = u => u.db>0 ? 'D' : (u.cr>0 ? 'C' : '');
+  const amtOf  = u => u.db>0 ? u.db : u.cr;
+
+  const pass = (test) => {
+    S.forEach(s=>{
+      if(s.matched) return;
+      const cand = used.find(u=> !u.matched && u.acc.length===4 && test(u,s));
+      if(cand){ s.matched=true; s.row=cand; cand.matched=true; }
+    });
+  };
+  pass((u,s)=> u.acc===s.acc && sensOf(u)===s.sens && eq(amtOf(u), s.amount));
+  pass((u,s)=> u.acc===s.acc && sensOf(u)===s.sens);
+  pass((u,s)=> u.acc===s.acc);
+
+  // 4. Analyse des lignes appariées
+  S.forEach(s=>{
+    if(!s.matched) return;
+    const u = s.row, c = res.cells[u.i];
+    const uSens = sensOf(u), uAmt = amtOf(u);
+
+    if(uSens !== s.sens){
+      c.db = false; c.cr = false;
+      res.errs.push({loc:s.acc, txt:"le sens est inversé : ce montant n'est pas du bon côté (débit / crédit)."});
+    } else if(!eq(uAmt, s.amount)){
+      if(s.sens==='D') c.db = false; else c.cr = false;
+      res.errs.push({loc:s.acc, txt:"le montant n'est pas correct. Recalcule-le à partir du document."});
+    } else {
+      if(s.sens==='D') c.db = true; else c.cr = true;
+    }
+
+    if(!s.decl.includes(u.decl)){
+      c.d = false;
+      res.errs.push({loc:s.acc, txt: s.decl[0]==='' ?
+        "aucun code de la déclaration T.V.A. ne doit figurer sur cette ligne."
+        : "le code de la déclaration T.V.A. n'est pas correct. Ouvre 📋 Grilles T.V.A."});
+    } else if(u.decl) c.d = true;
+
+    if(!s.pop.includes(u.pop)){
+      c.p = false;
+      res.errs.push({loc:s.acc, txt: s.pop[0]==='' ?
+        "aucun code Popsy ne doit figurer sur cette ligne."
+        : "le code T.V.A. Popsy n'est pas correct. Ouvre ⚙️ Codes Popsy."});
+    } else if(u.pop) c.p = true;
+
+    c.acc = true;
+  });
+
+  // 5. Lignes en trop / manquantes
+  used.forEach(u=>{
+    if(!u.matched && u.acc.length===4 && PCMN[u.acc]){
+      res.extra.push(u.i);
+      res.cells[u.i].c = false;
+      const dup = S.some(s=> s.acc===u.acc);
+      res.errs.push({loc:u.acc, txt: dup
+        ? "ce compte est encodé plusieurs fois : dans cette écriture, il ne doit apparaître qu'une seule fois."
+        : "ce compte ne fait pas partie de cette écriture."});
+    }
+  });
+  res.missing = S.filter(s=>!s.matched).length;
+  if(res.missing>0){
+    res.errs.push({txt:"Il manque <b>"+res.missing+" ligne"+(res.missing>1?'s':'')+"</b> à cette écriture."});
+  }
+
+  // 6. Équilibre
+  res.balOK = eq(res.totD, res.totC);
+  if(!res.balOK){
+    res.balMsg = "Contrôle d'équilibre : total débit <b>"+fmt(res.totD)+" €</b> ≠ total crédit <b>"+fmt(res.totC)+" €</b>. Dans toute écriture, débit = crédit.";
+  }
+
+  res.ok = res.errs.length===0 && res.missing===0 && res.extra.length===0;
+  return res;
+}
+
+/* ============================================================
+   RENDU DES DOCUMENTS
+   ============================================================ */
+function party(p, lbl){
+  if(!p) return '';
+  let h = '<div class="doc-party"><div class="lbl">'+lbl+'</div><div class="nm">'+p.nom+'</div>';
+  (p.adr||[]).forEach(a=> h += '<div class="ln">'+a+'</div>');
+  if(p.tva) h += '<div class="ln">N° T.V.A. : '+p.tva+'</div>';
+  if(p.iban) h += '<div class="ln">IBAN : '+p.iban+'</div>';
+  return h+'</div>';
+}
+
+function renderDoc(d){
+  if(d.t==='note'){
+    return '<div class="doc"><span class="doc-tag note">'+(d.titre||'Note')+'</span><div class="doc-note">'+d.html+'</div></div>';
+  }
+  if(d.t==='ext'){
+    let h = '<div class="doc"><span class="doc-tag ext">Extrait de compte n° '+d.num+'</span>';
+    h += '<div class="doc-meta"><div><b>Compte à vue</b>'+d.compte+'</div><div><b>Titulaire</b>SPRL OUTISUD</div></div>';
+    h += '<table class="doc-t"><thead><tr><th>Date</th><th>Libellé</th><th class="r">Montant (€)</th></tr></thead><tbody>';
+    h += '<tr><td>'+d.ancD+'</td><td>ANCIEN SOLDE</td><td class="r">'+d.ancS+'</td></tr>';
+    d.ops.forEach(o=> h += '<tr><td>'+o.d+'</td><td>'+o.lib+'</td><td class="r">'+o.mt+'</td></tr>');
+    h += '<tr><td>'+d.nouD+'</td><td><b>NOUVEAU SOLDE</b></td><td class="r"><b>'+d.nouS+'</b></td></tr>';
+    return h+'</tbody></table></div>';
+  }
+  if(d.t==='caisse'){
+    let h = '<div class="doc"><span class="doc-tag ext">Feuille de caisse n° '+d.num+' — '+d.mois+'</span>';
+    h += '<div class="doc-meta"><div><b>Titulaire</b>SPRL OUTISUD</div><div><b>Situation initiale</b>'+d.init+' €</div></div>';
+    h += '<table class="doc-t"><thead><tr><th>Date</th><th>Libellé</th><th class="r">Recettes (€)</th><th class="r">Dépenses (€)</th></tr></thead><tbody>';
+    d.ops.forEach(o=> h += '<tr><td>'+o.d+'</td><td>'+o.lib+'</td><td class="r">'+(o.rec||'')+'</td><td class="r">'+(o.dep||'')+'</td></tr>');
+    h += '<tr><td></td><td><b>SITUATION FINALE</b></td><td class="r" colspan="2"><b>'+d.fin+' €</b></td></tr>';
+    return h+'</tbody></table></div>';
+  }
+  // facture ou note de crédit
+  const nc = d.t==='nc';
+  let h = '<div class="doc"><span class="doc-tag'+(nc?' nc':'')+'">'+(nc?'Note de crédit':'Facture')+' n° '+d.num+'</span>';
+  h += '<div class="doc-head">'+party(d.de, nc?'Émise par':'Fournisseur / émetteur')+party(d.a, nc?'Destinataire':'Client / destinataire')+'</div>';
+  h += '<div class="doc-meta"><div><b>Numéro</b>'+d.num+'</div><div><b>Date</b>'+d.date+'</div>';
+  if(d.ech) h += '<div><b>Échéance</b>'+d.ech+'</div>';
+  if(d.ref) h += '<div><b>Référence</b>'+d.ref+'</div>';
+  h += '</div>';
+
+  h += '<table class="doc-t"><thead><tr><th style="width:52px">Qté</th><th>Désignation</th><th class="r">P.U. H.T.V.A.</th><th class="r">Montant H.T.V.A.</th></tr></thead><tbody>';
+  let brut = 0;
+  d.lignes.forEach(l=>{
+    h += '<tr><td>'+(l.q||'')+'</td><td>'+l.des+'</td><td class="r">'+(l.pu||'')+'</td><td class="r">'+l.mt+'</td></tr>';
+    const v = parseNum(l.mt); if(v!==null) brut += v;
+  });
+  h += '</tbody></table>';
+
+  h += '<div class="doc-tot">';
+  if(d.rem && d.rem.length){
+    h += '<div><span>Sous-total H.T.V.A.</span><span>'+fmt(brut)+' €</span></div>';
+    d.rem.forEach(r=> h += '<div><span>'+r.lib+'</span><span>'+r.mt+' €</span></div>');
+  }
+  h += '<div><span>Total H.T.V.A.</span><span>'+d.ht+' €</span></div>';
+  if(d.escompte) h += '<div><span>'+d.escompte.lib+'</span><span>'+d.escompte.base+' €</span></div>';
+  (d.tva||[]).forEach(t=> h += '<div><span>T.V.A. '+t.taux+' sur '+t.base+'</span><span>'+t.mt+' €</span></div>');
+  h += '<div><span>Total T.V.A.</span><span>'+d.ttva+' €</span></div>';
+  h += '<div class="sum"><span>'+(nc?'TOTAL À REMBOURSER':'TOTAL À PAYER')+'</span><span>'+d.pay+' €</span></div>';
+  h += '</div>';
+
+  if(d.legal) h += '<div class="doc-legal">'+d.legal+'</div>';
+  if(d.mentions) h += '<div style="margin-top:8px;font-size:.78rem">'+d.mentions.join(' — ')+'</div>';
+  if(d.acquit) h += '<div class="doc-stamp">POUR ACQUIT</div>';
+  return h+'</div>';
+}
+
+/* ============================================================
+   RENDU D'UN JOURNAL
+   ============================================================ */
+let LASTRES = {};
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+const JNAMES = {ACHAT:'Journal d\'achat', VENTE:'Journal de vente', CAISSE:'Journal de caisse',
+                FINANCIER:'Journal financier', OD:'Opérations diverses'};
+
+function jrnHTML(ji){
+  const ex = EXOS[APP.cur], j = ex.jx[ji], st = APP.st[APP.cur];
+  const rows = APP.grid[APP.cur][ji];
+  const res = LASTRES[ji];
+  const locked = st.stat[ji]!=='todo';
+  const icon = st.stat[ji]==='ok' ? (st.cat[ji]==='first'?'✅':'🔄') : (st.stat[ji]==='shown'?'👁':'');
+
+  let h = '<div class="jrn"><div class="jrn-h">';
+  h += '<span class="jrn-badge j-'+j.j+'">'+j.j+'</span>';
+  h += '<span class="jrn-t">'+JNAMES[j.j]+' — '+j.t+'</span>';
+  h += '<span class="jrn-d">'+j.d+'</span>';
+  if(icon) h += '<span class="jrn-state">'+icon+'</span>';
+  h += '</div><div class="jrn-body">';
+
+  h += '<table class="grid"><thead><tr>'
+     + '<th style="width:15%">N° compte</th><th style="width:13%">Décl. T.V.A.</th><th style="width:14%">Code Popsy</th>'
+     + '<th style="width:22%">Libellé</th><th style="width:16%">Débit</th><th style="width:16%">Crédit</th><th style="width:4%"></th>'
+     + '</tr></thead><tbody>';
+
+  rows.forEach((r,ri)=>{
+    const c = res ? (res.cells[ri]||{}) : {};
+    const cls = f => c[f]===false ? ' class="cell-bad"' : (c[f]===true ? ' class="cell-ok"' : '');
+    const dis = locked ? ' disabled' : '';
+    h += '<tr>';
+    h += '<td data-l="N° compte"'+cls('c')+'><input class="code" maxlength="4" inputmode="numeric" value="'+esc(r.c)+'" placeholder="0000"'+dis+' oninput="onCell('+ji+','+ri+',\'c\',this.value)"></td>';
+    h += '<td data-l="Code déclaration T.V.A."'+cls('d')+'><input class="code" maxlength="12" value="'+esc(r.d)+'" placeholder="—"'+dis+' oninput="onCell('+ji+','+ri+',\'d\',this.value)"></td>';
+    h += '<td data-l="Code T.V.A. Popsy"'+cls('p')+'><input class="code" maxlength="12" value="'+esc(r.p)+'" placeholder="—"'+dis+' oninput="onCell('+ji+','+ri+',\'p\',this.value)"></td>';
+    h += '<td data-l="Libellé (automatique)" class="no-l-desktop"><span class="lbl-cell" id="lb-'+ji+'-'+ri+'">'+(PCMN[normAcc(r.c)]||'—')+'</span></td>';
+    h += '<td data-l="Débit"'+cls('db')+'><input class="num" inputmode="decimal" value="'+esc(r.db)+'" placeholder="0,00"'+dis+' oninput="onAmount('+ji+','+ri+',\'db\',this)"><span class="calc-hint" id="ch-'+ji+'-'+ri+'-db"></span></td>';
+    h += '<td data-l="Crédit"'+cls('cr')+'><input class="num" inputmode="decimal" value="'+esc(r.cr)+'" placeholder="0,00"'+dis+' oninput="onAmount('+ji+','+ri+',\'cr\',this)"><span class="calc-hint" id="ch-'+ji+'-'+ri+'-cr"></span></td>';
+    h += '<td class="no-l">'+(locked?'':'<button class="del-btn" title="Supprimer la ligne" onclick="delRow('+ji+','+ri+')">🗑</button>')+'</td>';
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+
+  // totaux
+  let tD=0, tC=0;
+  rows.forEach(r=>{ tD += (parseNum(r.db)||0); tC += (parseNum(r.cr)||0); });
+  const bal = eq(tD,tC) && tD>0;
+  h += '<div class="jrn-tot '+(tD||tC ? (bal?'bal':'unbal') : '')+'">Total débit : <b>'+fmt(tD)+' €</b> &nbsp;•&nbsp; Total crédit : <b>'+fmt(tC)+' €</b>'+(tD||tC?(bal?' ✔':' ✖'):'')+'</div>';
+
+  if(!locked){
+    h += '<div class="jrn-actions">';
+    h += '<button class="btn btn-sm btn-ghost" onclick="addRow('+ji+')">➕ Ajouter une ligne</button>';
+    h += '<button class="btn btn-sm btn-primary" onclick="checkJ('+ji+')">✅ Vérifier l\'écriture</button>';
+    const canSol = st.tries[ji] >= 2;
+    h += '<button class="btn btn-sm btn-org-outline" onclick="showSol('+ji+')"'+(canSol?'':' disabled')+'>👁 Voir la solution</button>';
+    h += '<span class="tiny muted">'+(canSol ? 'Essais : '+st.tries[ji] : 'Solution disponible après 2 essais ('+st.tries[ji]+'/2)')+'</span>';
+    h += '</div>';
+  }
+
+  h += '<div id="fb-'+ji+'">'+(res ? feedbackHTML(ji,res) : '')+'</div>';
+  if(st.stat[ji]==='shown') h += solTableHTML(j);
+  h += '</div></div>';
+  return h;
+}
+
+function feedbackHTML(ji,res){
+  if(res.ok){
+    const st = APP.st[APP.cur];
+    return '<div class="fb fb-ok"><h4>✅ Écriture correcte</h4><span class="muted small">'
+      + (st.cat[ji]==='first' ? 'Parfait, du premier coup ! ' : 'Bravo, tu as trouvé après correction. ')
+      + 'Compte, sens, montant, code de la déclaration T.V.A. et code Popsy : tout est juste.</span></div>';
+  }
+  let h = '<div class="fb fb-bad"><h4>❌ À corriger — voici précisément où</h4><ul>';
+  const seen = new Set();
+  res.errs.forEach(e=>{
+    const key = (e.loc||'')+'|'+e.txt;
+    if(seen.has(key)) return; seen.add(key);
+    h += '<li>'+(e.loc ? '<span class="loc">'+e.loc+'</span> ' : '')+e.txt+'</li>';
+  });
+  h += '</ul>';
+  if(res.balMsg) h += '<div class="small" style="margin-top:8px;color:var(--warn)">⚖️ '+res.balMsg+'</div>';
+  h += '<div class="tiny muted" style="margin-top:8px">Les cases fautives sont encadrées en rouge, les cases correctes en vert. Corrige puis clique à nouveau sur « Vérifier ».</div></div>';
+  const j = EXOS[APP.cur].jx[ji];
+  if(j.hint) h += '<div class="fb fb-hint"><h4>💡 Piste de réflexion</h4><span class="muted small">'+j.hint+'</span></div>';
+  return h;
+}
+
+function solTableHTML(j){
+  let h = '<div class="fb fb-sol"><h4>👁 Écriture correcte</h4>';
+  h += '<table class="sol"><thead><tr><th>Compte</th><th>Décl. T.V.A.</th><th>Popsy</th><th>Libellé</th><th class="r">Débit</th><th class="r">Crédit</th></tr></thead><tbody>';
+  j.l.forEach(l=>{
+    h += '<tr><td>'+l.c+'</td><td>'+(l.d||'—')+'</td><td>'+(l.p||'—')+'</td><td class="lb">'+(PCMN[l.c]||'')+'</td>'
+       + '<td class="r">'+(l.db!=null?fmt(l.db):'')+'</td><td class="r">'+(l.cr!=null?fmt(l.cr):'')+'</td></tr>';
+  });
+  let tD=0,tC=0; j.l.forEach(l=>{ tD+=(l.db||0); tC+=(l.cr||0); });
+  h += '<tr><td colspan="4"><b>TOTAUX</b></td><td class="r"><b>'+fmt(tD)+'</b></td><td class="r"><b>'+fmt(tC)+'</b></td></tr>';
+  return h+'</tbody></table><div class="tiny muted" style="margin-top:7px">Recopie cette écriture sur ta feuille papier ('+EXOS[APP.cur].page+'), puis analyse l\'explication ci-dessous.</div></div>';
+}
+
+/* ============================================================
+   INTERACTIONS DE SAISIE
+   ============================================================ */
+function onCell(ji,ri,f,v){
+  APP.grid[APP.cur][ji][ri][f] = v;
+  if(f==='c'){
+    const el = document.getElementById('lb-'+ji+'-'+ri);
+    if(el) el.textContent = PCMN[normAcc(v)] || '—';
+  }
+}
+function onAmount(ji,ri,f,el){
+  APP.grid[APP.cur][ji][ri][f] = el.value;
+  const hint = document.getElementById('ch-'+ji+'-'+ri+'-'+f);
+  if(hint){
+    const v = el.value.trim();
+    if(v && isExpr(v.replace(/^[-+]/,''))){
+      const r = evalExpr(v);
+      hint.textContent = r===null ? '' : '= '+fmt(r)+' €';
+    } else hint.textContent = '';
+  }
+  updateTotals(ji);
+}
+function updateTotals(ji){
+  const rows = APP.grid[APP.cur][ji];
+  let tD=0,tC=0; rows.forEach(r=>{ tD+=(parseNum(r.db)||0); tC+=(parseNum(r.cr)||0); });
+  const box = document.querySelectorAll('#jxHost .jrn-tot')[ji];
+  if(!box) return;
+  const bal = eq(tD,tC) && tD>0;
+  box.className = 'jrn-tot '+((tD||tC)?(bal?'bal':'unbal'):'');
+  box.innerHTML = 'Total débit : <b>'+fmt(tD)+' €</b> &nbsp;•&nbsp; Total crédit : <b>'+fmt(tC)+' €</b>'+((tD||tC)?(bal?' ✔':' ✖'):'');
+}
+function addRow(ji){ APP.grid[APP.cur][ji].push(emptyRow()); renderJx(); }
+function delRow(ji,ri){
+  const g = APP.grid[APP.cur][ji];
+  if(g.length<=1) return;
+  g.splice(ri,1);
+  if(LASTRES[ji]) delete LASTRES[ji];
+  renderJx();
+}
+
+/* ============================================================
+   VÉRIFICATION / SOLUTION / PROGRESSION
+   ============================================================ */
+function checkJ(ji){
+  const ex = EXOS[APP.cur], st = APP.st[APP.cur];
+  st.tries[ji]++;
+  let res = correct(APP.grid[APP.cur][ji], ex.jx[ji].l);
+  (ex.jx[ji].alt||[]).forEach(alt=>{
+    if(res.ok) return;
+    const r2 = correct(APP.grid[APP.cur][ji], alt);
+    if(r2.ok || (r2.errs.length + r2.missing) < (res.errs.length + res.missing)) res = r2;
+  });
+  LASTRES[ji] = res;
+  if(res.ok){
+    st.stat[ji] = 'ok';
+    st.cat[ji]  = st.tries[ji]===1 ? 'first' : 'retry';
+    const p = st.tries[ji]===1 ? PTS_JOURNAL : (st.tries[ji]===2 ? 7 : 5);
+    st.pts += p; APP.score += p;
+  }
+  renderJx(); renderTheo(); updateHeader();
+  if(res.ok) afterJournal(ji);
+}
+
+function showSol(ji){
+  const st = APP.st[APP.cur];
+  st.stat[ji] = 'shown'; st.cat[ji] = 'shown';
+  st.pts += 2; APP.score += 2;
+  delete LASTRES[ji];
+  renderJx(); renderTheo(); updateHeader(); afterJournal(ji);
+}
+
+function afterJournal(ji){
+  const st = APP.st[APP.cur];
+  if(st.stat.every(s=>s!=='todo')) finishExercise();
+  else setTimeout(()=>{
+    const nodes = document.querySelectorAll('#jxHost .jrn');
+    if(nodes[ji+1]) nodes[ji+1].scrollIntoView({behavior:'smooth', block:'start'});
+  }, 250);
+}
+
+function skipExercise(){
+  const st = APP.st[APP.cur];
+  if(!confirm("Passer cet exercice ? Les écritures non résolues seront comptées comme « non trouvées » (0 point).")) return;
+  st.stat = st.stat.map(s=> s==='todo' ? 'shown' : s);
+  st.cat  = st.cat.map((c,i)=> c===null ? 'shown' : c);
+  st.skipped = true;
+  finishExercise();
+}
+
+function finishExercise(){
+  const ex = EXOS[APP.cur], st = APP.st[APP.cur];
+  st.done = true;
+  const max = ex.jx.length * PTS_JOURNAL;
+  const temps = stopExerciseTimer();
+  if(!st.sent){
+    st.sent = true;
+    sendResult('Ex '+ex.n+' — '+ex.t, st.pts, max, temps);
+  }
+  const pct = max ? st.pts/max : 0;
+  if(pct>=0.7) confetti();
+  renderEx(); updateHeader();
+  setTimeout(()=>{ const b=document.getElementById('exBilan'); if(b) b.scrollIntoView({behavior:'smooth',block:'center'}); }, 200);
+}
+
+/* ============================================================
+   ÉCRANS
+   ============================================================ */
+function show(id){
+  ['screenHome','screenHub','screenEx','screenFinal'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden', s!==id);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateHeader(){
+  document.getElementById('bScore').textContent = '⭐ '+APP.score+' pts';
+  const done = APP.st.filter(s=>s.done).length;
+  document.getElementById('progBar').style.width = (done/EXOS.length*100)+'%';
+}
+
+/* ---------- ACCUEIL ---------- */
+function renderHome(){
+  const h = `
+  <div class="card hero">
+    <div class="kicker">Institut Saint-Luc Frameries — Technicien en comptabilité</div>
+    <h1>OUTISUD 2 — Achats, ventes et trésorerie de septembre</h1>
+    <p class="muted">20 documents à comptabiliser, dans l'ordre exact de ton document papier : réouverture, factures et notes de crédit d'achat et de vente, feuilles de caisse et extraits de banque. Accent sur les <b>difficultés des achats</b> : emballages, transport, escompte, investissement, cocontractant et intracommunautaire — avec le <b>code de la déclaration T.V.A.</b> et le <b>code T.V.A. Popsy</b>.</p>
+    <div class="feat">
+      <div><b>🎯 Correction automatique</b><span class="muted small">L'application te dit exactement quelle case est fausse — sans te donner la réponse.</span></div>
+      <div><b>🔀 Ordre libre</b><span class="muted small">Encode tes lignes dans l'ordre que tu veux : seul le contenu compte.</span></div>
+      <div><b>♾️ Essais illimités</b><span class="muted small">C'est un entraînement. La solution se débloque après 2 essais.</span></div>
+      <div><b>📄 Documents réalistes</b><span class="muted small">Factures, notes de crédit et extraits complets, avec les mentions légales.</span></div>
+    </div>
+    <div class="btn-row" style="justify-content:center;margin-top:22px">
+      <button class="btn btn-primary" onclick="startGame()">▶ Commencer</button>
+      <button class="btn btn-acc-outline" onclick="openLB('app')">🏆 Classement — cette app</button>
+      <button class="btn btn-org-outline" onclick="openLB('global')">🌍 Classement général</button>
+    </div>
+    <div class="small muted" style="margin-top:14px" id="homeId"></div>
+  </div>`;
+  document.getElementById('screenHome').innerHTML = h;
+  const el = document.getElementById('homeId');
+  if(APP.email) el.innerHTML = '👤 '+APP.email+(APP.classe?' — <b>'+APP.classe+'</b>':'');
+}
+
+/* ---------- HUB ---------- */
+function renderHub(){
+  let h = `<div class="card">
+    <h2>Choisis un exercice</h2>
+    <div class="small muted" style="margin-top:6px">Les exercices suivent l'ordre exact du document « Exercice formatif OUTISUD 2 » (septembre). Tu peux les faire dans l'ordre ou aller directement à celui qui te pose problème.</div>
+    <div class="legend" style="margin-top:12px">
+      <span class="pill">✅ <b>Trouvé du 1<sup>er</sup> coup</b></span>
+      <span class="pill">🔄 <b>Corrigé après essai(s)</b></span>
+      <span class="pill">👁 <b>Solution montrée / passé</b></span>
+    </div>
+  </div>`;
+  let cur = null;
+  EXOS.forEach((ex,i)=>{
+    if(ex.ch!==cur){
+      if(cur!==null) h += '</div></div>';
+      cur = ex.ch;
+      h += '<div class="chapter"><div class="chapter-title">'+ex.ch+'</div><div class="hub-grid">';
+    }
+    const st = APP.st[i];
+    let cls='', star='';
+    if(st.done){
+      const allFirst = st.cat.every(c=>c==='first');
+      const anyShown = st.cat.some(c=>c==='shown');
+      if(anyShown){ cls='shown'; star='👁'; }
+      else if(allFirst){ cls='done'; star='⭐'; }
+      else { cls='done'; star='✔'; }
+      if(st.skipped){ cls='skipped'; star='⏭'; }
+    }
+    h += '<button class="hub-card '+cls+'" onclick="goEx('+i+')">'
+       + '<span class="hub-num">'+ex.n+'</span>'
+       + '<span><span class="hub-t">'+ex.t+'</span><span class="hub-s">'+ex.jx.length+' écriture'+(ex.jx.length>1?'s':'')+' — '+ex.jx.map(j=>j.j.toLowerCase()).join(', ')+'</span></span>'
+       + '<span class="hub-star">'+star+'</span></button>';
+  });
+  h += '</div></div>';
+  const done = APP.st.filter(s=>s.done).length;
+  h += '<div class="card" style="text-align:center"><div class="muted small">'+done+' / '+EXOS.length+' exercices terminés</div>'
+     + '<div class="btn-row" style="justify-content:center;margin-top:12px">'
+     + '<button class="btn btn-orange" onclick="renderFinal()">📊 Voir mon bilan complet</button>'
+     + '<button class="btn btn-acc-outline btn-sm" onclick="openLB(\'app\')">🏆 Classement</button></div></div>';
+  document.getElementById('screenHub').innerHTML = h;
+}
+
+/* ---------- EXERCICE ---------- */
+function renderEx(){
+  const ex = EXOS[APP.cur], st = APP.st[APP.cur];
+  let h = `<div class="card">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="badge acc">Exercice ${ex.n} / ${EXOS.length}</span>
+      <span class="badge">${ex.ch}</span>
+      <div class="spacer" style="flex:1"></div>
+      <button class="btn btn-sm btn-ghost" onclick="goEx(${APP.cur-1})" ${APP.cur===0?'disabled':''}>◀</button>
+      <button class="btn btn-sm btn-ghost" onclick="goEx(${APP.cur+1})" ${APP.cur===EXOS.length-1?'disabled':''}>▶</button>
+    </div>
+    <h1 style="margin-top:10px;font-size:1.3rem">${ex.t}</h1>
+    <div class="small muted" style="margin-top:4px">📄 Feuille papier : ${ex.page}</div>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn btn-sm btn-ghost" onclick="openRef('pcmn')">📖 Plan comptable</button>
+      <button class="btn btn-sm btn-ghost" onclick="openRef('grilles')">📋 Grilles T.V.A.</button>
+      <button class="btn btn-sm btn-ghost" onclick="openRef('popsy')">⚙️ Codes Popsy</button>
+      ${st.done?'':'<button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="skipExercise()">⏭ Passer l\'exercice</button>'}
+    </div>
+  </div>`;
+
+  h += '<div class="card"><h3 style="margin-bottom:10px">📄 Document'+(ex.docs.length>1?'s':'')+' à comptabiliser</h3>';
+  ex.docs.forEach(d=> h += renderDoc(d));
+  h += '</div>';
+
+  h += '<div id="theoHost"></div>';
+
+  h += '<div id="jxHost"></div>';
+  h += '<div id="exEnd"></div>';
+  document.getElementById('screenEx').innerHTML = h;
+  renderTheo();
+  renderJx();
+  if(st.done) renderExEnd();
+  show('screenEx');
+}
+
+function theoUnlocked(){
+  const st = APP.st[APP.cur];
+  if(st.theoUnlocked) return true;
+  if(st.done || st.skipped || st.tries.some(t=>t>=2)){ st.theoUnlocked = true; return true; }
+  return false;
+}
+function renderTheo(){
+  const host = document.getElementById('theoHost');
+  if(!host) return;
+  const ex = EXOS[APP.cur], st = APP.st[APP.cur];
+  if(!ex.theo){ host.innerHTML=''; return; }
+  if(!theoUnlocked()){
+    const max = st.tries.length ? Math.max.apply(null, st.tries) : 0;
+    host.innerHTML = '<div class="theo locked">'
+      + '<div class="theo-h">🔒 Rappel théorique — verrouillé'
+      + '<span class="theo-cnt">'+max+' / 2 essais</span></div>'
+      + '<div class="theo-lock">Cherche d\'abord par toi-même : c\'est en essayant que tu retiens. '
+      + 'Le rappel théorique se débloque après <b>2 tentatives</b> sur une écriture, en même temps que le bouton « Voir la solution ».</div></div>';
+    return;
+  }
+  if(st.theoOpen === undefined) st.theoOpen = !!ex.theo.open;
+  host.innerHTML = '<div class="theo'+(st.theoOpen?' open':'')+'" id="theoBox">'
+    + '<button class="theo-h" onclick="toggleTheo()">🎓 '+ex.theo.t+'<span class="chev">▾</span></button>'
+    + '<div class="theo-b">'+ex.theo.h+'</div></div>';
+}
+function toggleTheo(){
+  const st = APP.st[APP.cur];
+  st.theoOpen = !st.theoOpen;
+  const el = document.getElementById('theoBox');
+  if(el) el.classList.toggle('open', st.theoOpen);
+}
+function renderJx(){
+  const host = document.getElementById('jxHost');
+  if(!host) return;
+  host.innerHTML = EXOS[APP.cur].jx.map((j,ji)=> jrnHTML(ji)).join('');
+}
+
+function renderExEnd(){
+  const ex = EXOS[APP.cur], st = APP.st[APP.cur];
+  const max = ex.jx.length*PTS_JOURNAL;
+  const nb = c => st.cat.filter(x=>x===c).length;
+  let h = '<div class="card" id="exBilan">';
+  h += '<h2>📊 Bilan de l\'exercice '+ex.n+'</h2>';
+  h += '<div class="legend" style="margin-top:10px"><span class="pill">✅ <b>'+nb('first')+'</b> du 1<sup>er</sup> coup</span>'
+     + '<span class="pill">🔄 <b>'+nb('retry')+'</b> corrigée(s)</span>'
+     + '<span class="pill">👁 <b>'+nb('shown')+'</b> montrée(s)</span>'
+     + '<span class="pill">⭐ <b>'+st.pts+' / '+max+'</b> points</span></div>';
+  h += '<div class="fb fb-ok" style="border-color:var(--blue);background:rgba(74,168,255,.08)"><h4>📘 Ce qu\'il faut retenir</h4><span class="small" style="color:var(--text2)">'+ex.exp+'</span></div>';
+  h += '<div class="btn-row" style="margin-top:14px">';
+  if(APP.cur < EXOS.length-1) h += '<button class="btn btn-primary" onclick="goEx('+(APP.cur+1)+')">Exercice suivant ➜</button>';
+  else h += '<button class="btn btn-orange" onclick="renderFinal()">🏁 Voir le bilan final</button>';
+  h += '<button class="btn btn-ghost" onclick="retryEx()">🔄 Recommencer cet exercice</button>';
+  h += '<button class="btn btn-ghost" onclick="goHub()">☰ Liste des exercices</button>';
+  h += '</div></div>';
+  document.getElementById('exEnd').innerHTML = h;
+}
+
+function retryEx(){
+  const ex = EXOS[APP.cur];
+  APP.st[APP.cur].tries = ex.jx.map(()=>0);
+  APP.st[APP.cur].stat  = ex.jx.map(()=>'todo');
+  APP.st[APP.cur].cat   = ex.jx.map(()=>null);
+  APP.st[APP.cur].done = false; APP.st[APP.cur].skipped = false;
+  APP.grid[APP.cur] = ex.jx.map(()=> [emptyRow(),emptyRow(),emptyRow(),emptyRow()]);
+  LASTRES = {};
+  startExerciseTimer();
+  renderEx(); updateHeader();
+}
+
+function goEx(i){
+  if(i<0 || i>=EXOS.length) return;
+  APP.cur = i; LASTRES = {};
+  startExerciseTimer();
+  renderEx();
+}
+function goHub(){ renderHub(); show('screenHub'); }
+
+/* ---------- BILAN FINAL ---------- */
+function renderFinal(){
+  let tot=0, max=0, f=0, r=0, s=0;
+  APP.st.forEach((st,i)=>{
+    tot += st.pts; max += EXOS[i].jx.length*PTS_JOURNAL;
+    f += st.cat.filter(c=>c==='first').length;
+    r += st.cat.filter(c=>c==='retry').length;
+    s += st.cat.filter(c=>c==='shown').length;
+  });
+  const totJ = f+r+s;
+  const pct1 = totJ ? Math.round(f/totJ*100) : 0;
+  let grade, msg;
+  if(pct1>=85){ grade='A — Excellent'; msg="Maîtrise remarquable : comptes, grilles T.V.A. et codes Popsy sont acquis. Tu peux t'attaquer aux écritures de fin d'exercice."; }
+  else if(pct1>=65){ grade='B — Très bien'; msg="Très bon niveau. Reprends les exercices marqués 🔄 : ce sont souvent les codes de la déclaration T.V.A. qui coincent."; }
+  else if(pct1>=45){ grade='C — Satisfaisant'; msg="Les bases sont là. Refais les exercices marqués 👁 en t'aidant du rappel théorique avant de te lancer."; }
+  else { grade='D — À retravailler'; msg="Ne te décourage pas : reprends chapitre par chapitre, en lisant chaque rappel théorique avant de comptabiliser."; }
+  const medal = pct1>=90?'🏆':(pct1>=70?'🥇':(pct1>=50?'🥈':'🥉'));
+
+  let h = '<div class="card grade"><div class="medal">'+medal+'</div><div class="gr">'+grade+'</div>'
+        + '<div class="muted">'+pct1+' % des écritures réussies du premier coup</div>'
+        + '<div class="small muted" style="max-width:520px;margin:12px auto 0">'+msg+'</div></div>';
+
+  h += '<div class="card"><div class="stats">'
+     + '<div class="stat"><div class="v" style="color:var(--accent)">'+f+'</div><div class="k">✅ 1<sup>er</sup> coup</div></div>'
+     + '<div class="stat"><div class="v" style="color:var(--orange)">'+r+'</div><div class="k">🔄 corrigées</div></div>'
+     + '<div class="stat"><div class="v" style="color:var(--error)">'+s+'</div><div class="k">👁 montrées</div></div>'
+     + '<div class="stat"><div class="v">'+tot+'/'+max+'</div><div class="k">⭐ points</div></div>'
+     + '<div class="stat"><div class="v mono">'+fmtTime(elapsed())+'</div><div class="k">⏱️ temps</div></div>'
+     + '</div>';
+
+  h += '<div class="legend"><span class="pill">✅ <b>1<sup>er</sup> coup</b></span><span class="pill">🔄 <b>corrigée</b></span><span class="pill">👁 <b>montrée</b></span></div>';
+  h += '<div style="overflow-x:auto"><table class="bilan"><thead><tr><th>#</th><th>Exercice</th><th class="c">✅</th><th class="c">🔄</th><th class="c">👁</th><th class="c">Points</th></tr></thead><tbody>';
+  APP.st.forEach((st,i)=>{
+    const m = EXOS[i].jx.length*PTS_JOURNAL;
+    h += '<tr><td class="c">'+EXOS[i].n+'</td><td>'+EXOS[i].t+'</td>'
+       + '<td class="c">'+st.cat.filter(c=>c==='first').length+'</td>'
+       + '<td class="c">'+st.cat.filter(c=>c==='retry').length+'</td>'
+       + '<td class="c">'+st.cat.filter(c=>c==='shown').length+'</td>'
+       + '<td class="c">'+(st.done?st.pts+'/'+m:'—')+'</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  // Bilan par chapitre
+  const chs = [];
+  EXOS.forEach((ex,i)=>{ let c = chs.find(x=>x.ch===ex.ch); if(!c){ c={ch:ex.ch,pts:0,max:0,done:0,n:0}; chs.push(c); }
+    c.n++; if(APP.st[i].done){ c.done++; c.pts += APP.st[i].pts; c.max += ex.jx.length*PTS_JOURNAL; } });
+  h += '<div class="card"><h3 style="margin-bottom:10px">🎯 Bilan par chapitre</h3><div style="overflow-x:auto"><table class="bilan"><thead><tr><th>Chapitre</th><th class="c">Exercices faits</th><th class="c">Réussite</th><th class="c">Statut</th></tr></thead><tbody>';
+  const revoir = [];
+  chs.forEach(c=>{
+    const pc = c.max ? Math.round(c.pts/c.max*100) : null;
+    let stt = '—';
+    if(pc!==null){ stt = pc>=80 ? '✅ atteint' : (pc>=50 ? '🟠 en cours' : '❌ non atteint'); if(pc<80) revoir.push(c.ch); }
+    h += '<tr><td>'+c.ch+'</td><td class="c">'+c.done+' / '+c.n+'</td><td class="c">'+(pc===null?'—':pc+' %')+'</td><td class="c">'+stt+'</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  if(revoir.length){
+    h += '<div class="fb fb-hint" style="margin-top:12px"><h4>📚 À revoir dans ton cours</h4><ul>';
+    revoir.forEach(ch=> h += '<li class="small"><b>'+ch+'</b> — '+CH_REVOIR[ch]+'</li>');
+    h += '</ul></div>';
+  }
+  h += '</div>';
+
+  h += '<div class="card" style="text-align:center"><div class="btn-row" style="justify-content:center">'
+     + '<button class="btn btn-acc-outline" onclick="openLB(\'app\')">🏆 Classement — cette app</button>'
+     + '<button class="btn btn-org-outline" onclick="openLB(\'global\')">🌍 Classement général</button>'
+     + '<button class="btn btn-ghost" onclick="goHub()">☰ Liste des exercices</button>'
+     + '<button class="btn btn-primary" onclick="replay()">🔄 Rejouer</button>'
+     + '</div></div>';
+  document.getElementById('screenFinal').innerHTML = h;
+  show('screenFinal');
+  if(pct1>=70) confetti();
+}
+
+function replay(){
+  initState(); APP.score = 0; APP.cur = 0; LASTRES = {};
+  TRACKING.sessionId = new Date().toISOString();
+  APP.globalTimerStart = Date.now();
+  updateHeader(); goHub();
+}
+
+function startGame(){ goHub(); }
+
+/* ============================================================
+   CHRONOMÈTRES
+   ============================================================ */
+function elapsed(){ return APP.globalTimerStart ? Math.floor((Date.now()-APP.globalTimerStart)/1000) : 0; }
+function fmtTime(s){
+  const m = Math.floor(s/60), r = s%60;
+  return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');
+}
+function startGlobalTimer(){
+  APP.globalTimerStart = Date.now();
+  if(APP.globalTimerInterval) clearInterval(APP.globalTimerInterval);
+  APP.globalTimerInterval = setInterval(()=>{
+    document.getElementById('bTimer').textContent = '⏱️ '+fmtTime(elapsed());
+  }, 1000);
+}
+function startExerciseTimer(){ APP.exerciseStartTime = Date.now(); }
+function stopExerciseTimer(){
+  if(!APP.exerciseStartTime) return 0;
+  const t = Math.max(1, Math.floor((Date.now()-APP.exerciseStartTime)/1000));
+  APP.exerciseStartTime = null;
+  return t;
+}
+
+/* ============================================================
+   CONFETTIS
+   ============================================================ */
+function confetti(){
+  const cols = ['#3ae08c','#ff9f43','#4aa8ff','#a78bfa','#ffc94d'];
+  for(let i=0;i<70;i++){
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*100+'vw';
+    c.style.background = cols[Math.floor(Math.random()*cols.length)];
+    c.style.animationDuration = (2+Math.random()*2)+'s';
+    c.style.animationDelay = (Math.random()*.5)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 4600);
+  }
+}
+
+/* ============================================================
+   MODALS DE RÉFÉRENCE
+   ============================================================ */
+function closeModal(){ document.getElementById('modalHost').innerHTML = ''; }
+
+function openRef(kind){
+  const titles = {pcmn:'📖 Plan comptable (P.C.M.N.)', grilles:'📋 Grilles de la déclaration T.V.A.', popsy:'⚙️ Codes T.V.A. Popsy'};
+  let h = '<div class="modal" onclick="if(event.target===this)closeModal()"><div class="modal-box wide">'
+        + '<div class="modal-h"><h3>'+titles[kind]+'</h3><button class="close-x" onclick="closeModal()">×</button></div>'
+        + '<div class="modal-b">';
+  if(kind==='pcmn'){
+    h += '<input class="field ref-search" id="refQ" placeholder="Rechercher un numéro ou un libellé…" oninput="filterRef()">';
+    h += '<div class="ref-list" id="refList">';
+    Object.keys(PCMN).forEach(k=> h += '<div class="ref-item"><span class="k">'+k+'</span><span class="v">'+PCMN[k]+'</span></div>');
+    h += '</div>';
+  } else {
+    const arr = kind==='grilles' ? GRILLES : POPSY;
+    h += '<input class="field ref-search" id="refQ" placeholder="Rechercher…" oninput="filterRef()"><div class="ref-list" id="refList">';
+    arr.forEach(it=>{
+      if(it.g) h += '<div class="ref-item" data-grp="1" style="border:none;padding-top:12px"><span class="v" style="color:var(--orange);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.8px">'+it.g+'</span></div>';
+      else h += '<div class="ref-item"><span class="k">'+it.k+'</span><span class="v">'+it.v+'</span></div>';
+    });
+    h += '</div>';
+  }
+  h += '</div><div class="modal-f"><button class="btn btn-ghost" onclick="closeModal()">Fermer</button></div></div></div>';
+  document.getElementById('modalHost').innerHTML = h;
+}
+function filterRef(){
+  const q = document.getElementById('refQ').value.toLowerCase();
+  document.querySelectorAll('#refList .ref-item').forEach(el=>{
+    if(el.dataset.grp){ el.style.display = q ? 'none' : 'flex'; return; }
+    el.style.display = el.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
+  });
+}
+
+/* ============================================================
+   TRACKING — MODAL EMAIL (JSONP obligatoire)
+   ============================================================ */
+function showEmailModal(){
+  const h = '<div class="modal"><div class="modal-box" style="max-width:480px">'
+    + '<div class="modal-h"><h3>👤 Identification</h3></div>'
+    + '<div class="modal-b"><p class="small muted" style="margin-bottom:12px">Encode ton adresse e-mail scolaire pour que tes résultats soient enregistrés et que tu apparaisses dans le classement de ta classe.</p>'
+    + '<input class="field" id="emIn" type="email" placeholder="prenom.nom@eleve.istlm.be" value="'+APP.email+'" onkeydown="if(event.key===\'Enter\')validateEmail()">'
+    + '<div class="err-msg" id="emErr"></div></div>'
+    + '<div class="modal-f"><button class="btn btn-primary" id="emailBtn" onclick="validateEmail()">Valider et commencer</button></div>'
+    + '</div></div>';
+  document.getElementById('modalHost').innerHTML = h;
+  setTimeout(()=>{ const i=document.getElementById('emIn'); if(i) i.focus(); }, 250);
+}
+
+function validateEmail(){
+  const inp = document.getElementById('emIn');
+  const err = document.getElementById('emErr');
+  const btn = document.getElementById('emailBtn');
+  const email = (inp.value||'').trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent = "Adresse e-mail invalide."; return; }
+  err.textContent = "Vérification en cours…"; btn.disabled = true;
+
+  const cb = '_cb_' + Date.now();
+  const done = ok => { btn.disabled = false; if(!ok) err.textContent = "Cette adresse n'est pas dans la liste de la classe. Vérifie l'orthographe ou préviens ton professeur."; };
+  window[cb] = function(resp){
+    delete window[cb];
+    const sc = document.getElementById('jsonp_email'); if(sc) sc.remove();
+    if(resp && resp.found){
+      APP.email = email; APP.classe = resp.classe || '';
+      localStorage.setItem('student_email', APP.email);
+      localStorage.setItem('student_classe', APP.classe);
+      TRACKING.sessionId = new Date().toISOString();
+      closeModal(); startGlobalTimer(); renderHome();
+    } else done(false);
+  };
+  const s = document.createElement('script');
+  s.id = 'jsonp_email';
+  s.src = TRACKING.scriptUrl + '?action=check_email&email=' + encodeURIComponent(email) + '&callback=' + cb;
+  s.onerror = function(){
+    delete window[cb]; s.remove();
+    err.innerHTML = "Connexion impossible. <button class='btn btn-sm btn-ghost' onclick='offlineMode()'>Continuer sans enregistrement</button>";
+    btn.disabled = false;
+  };
+  document.body.appendChild(s);
+}
+
+function offlineMode(){
+  APP.email = ''; APP.classe = '';
+  TRACKING.sessionId = new Date().toISOString();
+  closeModal(); startGlobalTimer(); renderHome();
+}
+
+function sendResult(niveau, points, pointsMax, temps){
+  if(!APP.email) return;
+  try{
+    fetch(TRACKING.scriptUrl, {
+      method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"},
+      body: JSON.stringify({
+        email: APP.email, classe: APP.classe, app: TRACKING.appName,
+        niveau: niveau, points: points, pointsMax: pointsMax, temps: temps,
+        totalNiveaux: TRACKING.totalNiveaux, sessionId: TRACKING.sessionId
+      })
+    });
+  }catch(e){ console.warn('Envoi impossible', e); }
+}
+
+/* ============================================================
+   CLASSEMENTS
+   ============================================================ */
+let LBTAB = 'app';
+function openLB(tab){
+  LBTAB = tab || 'app';
+  const cls = APP.classe ? ' ('+APP.classe+')' : '';
+  const h = '<div class="modal" onclick="if(event.target===this)closeModal()"><div class="modal-box wide">'
+    + '<div class="modal-h"><h3 id="lbTitle">Classement'+cls+'</h3><button class="close-x" onclick="closeModal()">×</button></div>'
+    + '<div class="modal-b"><div class="tabs">'
+    + '<button class="tab" id="tabApp" onclick="switchLBTab(\'app\')">🏆 Cette application</button>'
+    + '<button class="tab" id="tabGlob" onclick="switchLBTab(\'global\')">🌍 Général</button></div>'
+    + '<div id="lbBody" class="muted small">Chargement…</div></div>'
+    + '<div class="modal-f"><button class="btn btn-ghost" onclick="closeModal()">Fermer</button></div></div></div>';
+  document.getElementById('modalHost').innerHTML = h;
+  switchLBTab(LBTAB);
+}
+function switchLBTab(tab){
+  LBTAB = tab;
+  document.getElementById('tabApp').classList.toggle('on', tab==='app');
+  document.getElementById('tabGlob').classList.toggle('on', tab==='global');
+  const cls = APP.classe ? ' ('+APP.classe+')' : '';
+  document.getElementById('lbTitle').textContent = tab==='app' ? '🏆 Classement — écritures OUTISUD'+cls : '🌍 Classement général'+cls;
+  document.getElementById('lbBody').innerHTML = 'Chargement…';
+  fetchLeaderboard(tab);
+}
+function fetchLeaderboard(tab){
+  const cb = '_lb_' + Date.now();
+  window[cb] = function(resp){
+    delete window[cb];
+    const sc = document.getElementById('jsonp_lb'); if(sc) sc.remove();
+    const list = (resp && (resp.leaderboard || resp.data)) || [];
+    renderLeaderboard(list, tab);
+  };
+  let url = tab==='app'
+    ? TRACKING.scriptUrl+'?action=leaderboard_app&app='+encodeURIComponent(TRACKING.appName)+'&mode=last'
+    : TRACKING.scriptUrl+'?action=leaderboard_global&mode=last';
+  if(APP.classe) url += '&classe='+encodeURIComponent(APP.classe);
+  url += '&callback='+cb;
+  const s = document.createElement('script');
+  s.id = 'jsonp_lb'; s.src = url;
+  s.onerror = function(){ delete window[cb]; s.remove();
+    document.getElementById('lbBody').innerHTML = '<span class="muted small">Classement indisponible pour le moment.</span>'; };
+  document.body.appendChild(s);
+}
+function renderLeaderboard(list, tab){
+  const box = document.getElementById('lbBody');
+  if(!box) return;
+  if(!list.length){ box.innerHTML = '<span class="muted small">Aucun résultat pour le moment. Sois le premier !</span>'; return; }
+  if(tab==='global'){
+    list.sort((a,b)=>{
+      const pa = a.pct||0, pb = b.pct||0;
+      if(pb!==pa) return pb-pa;
+      return (a.totalTemps||0)-(b.totalTemps||0);
+    });
+    list.forEach((e,i)=>{ e.rang = i+1; });
+  }
+  let h = '<div style="overflow-x:auto"><table class="lb"><thead><tr><th>#</th><th>Élève</th><th>Points</th><th>%</th><th>'
+        + (tab==='app'?'Exercices':'Applications')+'</th><th>Temps</th></tr></thead><tbody>';
+  list.forEach((row,i)=>{
+    const pct = row.pct!=null ? row.pct : (row.pourcentage!=null ? row.pourcentage : 0);
+    const temps = row.totalTemps || row.totalTime || 0;
+    const count = tab==='app' ? (row.niveauxCompletes||row.niveaux||0) : (row.appsCompletes||row.apps||0);
+    const totN = tab==='app' ? (row.totalNiveaux||TRACKING.totalNiveaux) : (row.totalPossibleNiveaux||0);
+    const medal = i===0?'🥇':(i===1?'🥈':(i===2?'🥉':(row.rang||i+1)));
+    const me = (row.email||'').toLowerCase()===APP.email ? ' class="me"' : '';
+    const nom = (row.email||'').split('@')[0].replace(/\./g,' ');
+    h += '<tr'+me+'><td>'+medal+'</td><td>'+nom+'</td><td class="mono">'+(row.totalPoints||0)+'</td><td class="mono">'+pct+' %</td>'
+       + '<td>'+count+(totN?' / '+totN:'')+'<div class="bar"><i style="width:'+(totN?Math.min(100,count/totN*100):0)+'%"></i></div></td>'
+       + '<td class="mono">'+fmtTime(temps)+'</td></tr>';
+  });
+  box.innerHTML = h+'</tbody></table></div>';
+}
+
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+function init(){
+  initState();
+  renderHome();
+  show('screenHome');
+  updateHeader();
+  showEmailModal();
+}
+init();
+
+</script>
+</body>
+</html>
