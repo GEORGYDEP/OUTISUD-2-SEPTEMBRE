@@ -375,7 +375,8 @@ const PCMN = {
 "4600":"Acomptes reçus sur commandes",
 "4900":"Charges à reporter","4920":"Charges à imputer","4990":"Comptes d'attente",
 "5400":"Valeurs échues à l'encaissement","5500":"Banques — compte courant",
-"5501":"Banques — chèques émis / paiements en cours","5700":"Caisse — espèces",
+"5501":"Banques — chèques émis / paiements en cours",
+"5600":"Office des chèques postaux — compte courant (compte postal)","5700":"Caisse — espèces",
 "5800":"Virements internes",
 "6000":"Achats de matières premières","6010":"Achats de fournitures",
 "6020":"Achats de services, travaux et études","6040":"Achats de marchandises",
@@ -515,6 +516,8 @@ const DOC_EXT1 = {t:"ext", num:"1", compte:"12-4567890-02", ancD:"01/09/XX", anc
        {d:"17/09/XX", lib:"Virement vers RIDEC fact. 123", mt:"-1.654,00"},
        {d:"20/09/XX", lib:"Virement vers All Sign", mt:"-27.736,69"}],
   nouD:"20/09/XX", nouS:"19.692,31"};
+const DOC_EXTPOST = {t:"ext", tag:"Extrait de compte postal", num:"1", banque:"BNP Paribas Fortis — via bpost", compte:"000-1234567-48", ancD:"01/09/XX", ancS:"6.000,00",
+  ops:[], nouD:"30/09/XX", nouS:"6.000,00"};
 const DOC_CAISSE1 = {t:"caisse", num:"1", mois:"Septembre", init:"1.500,00", fin:"3.129,00",
   ops:[{d:"02/09/XX", lib:"Valentin fact. 658", rec:"6.500,00"},
        {d:"05/09/XX", lib:"Cotubex fact. 88", dep:"65,00"},
@@ -524,18 +527,19 @@ const EXOS = [
 
 /* ============ 1 ============ */
 {n:1, ch:CH_A, page:"page 1", t:"Écriture de réouverture au 01/09/XX",
- docs:[{t:"note", titre:"Énoncé", html:`Tu es l'aide-comptable de la société <b>OUTISUD</b>. Avant d'encoder les documents de septembre, tu dois passer l'<b>écriture de réouverture</b> au 01/09/XX.<br><br>C'est à toi de retrouver les montants : cherche dans les documents ci-dessous l'argent dont la société dispose <b>au départ</b>, en banque et en caisse. Tout ce qui se trouve en banque et en caisse a pour contrepartie le compte <b>1000 Capital</b>.`},
-   DOC_EXT1, DOC_CAISSE1],
+ docs:[{t:"note", titre:"Énoncé", html:`Tu es l'aide-comptable de la société <b>OUTISUD</b>. Avant d'encoder les documents de septembre, tu dois passer l'<b>écriture de réouverture</b> au 01/09/XX.<br><br>C'est à toi de retrouver les montants : cherche dans les documents ci-dessous l'argent dont la société dispose <b>au départ</b>, en banque (compte bancaire et compte postal) et en caisse. Tout ce qui se trouve en banque et en caisse a pour contrepartie le compte <b>1000 Capital</b>.`},
+   DOC_EXT1, DOC_EXTPOST, DOC_CAISSE1],
  theo:{open:true, t:"Rappel — la réouverture des comptes", h:`
   <p>La réouverture « rallume » la comptabilité en réinscrivant ce que l'entreprise possède et ce qu'elle doit.</p>
-  <ul><li>Les comptes d'<b>ACTIF</b> (banque, caisse…) se rouvrent au <b>DÉBIT</b>.</li>
+  <ul><li>Les comptes d'<b>ACTIF</b> (banque, compte postal, caisse…) se rouvrent au <b>DÉBIT</b>.</li>
   <li>Le <b>capital</b> (passif) se rouvre au <b>CRÉDIT</b> et équilibre l'écriture.</li></ul>
   <p>Le montant de départ d'un extrait est l'<b>ancien solde</b> ; celui d'une feuille de caisse est la <b>situation initiale</b>.</p>
-  <p>Aucun code T.V.A. : ce n'est ni un achat ni une vente. Dans Popsy : journal de réouverture, période <b>REP</b> — c'est la seule écriture où l'on encode directement 5500 et 5700.</p>`},
- exp:`La banque démarre à <b>12.500,00 €</b> (ancien solde de l'extrait n° 1) et la caisse à <b>1.500,00 €</b> (situation initiale de la feuille de caisse 1). Ces 14.000,00 € d'actif ont pour contrepartie le capital : <b>ACTIF = PASSIF</b>.`,
+  <p>Aucun code T.V.A. : ce n'est ni un achat ni une vente. Dans Popsy : journal de réouverture, période <b>REP</b> — c'est la seule écriture où l'on encode directement 5500, 5600 et 5700.</p>
+  <p>Le compte postal (<b>5600</b>) a son propre extrait : dans Popsy, il faut donc créer un <b>journal financier supplémentaire</b>, relié au compte 5600.</p>`},
+ exp:`La banque démarre à <b>12.500,00 €</b> (ancien solde de l'extrait n° 1), le compte postal <b>5600</b> à <b>6.000,00 €</b> (ancien solde de l'extrait du compte postal, sans mouvement) et la caisse à <b>1.500,00 €</b> (situation initiale de la feuille de caisse 1). Ces 20.000,00 € d'actif ont pour contrepartie le capital : <b>ACTIF = PASSIF</b>.`,
  jx:[{j:"OD", d:"01/09/XX", t:"Réouverture des comptes (journal ODR, période REP)",
-   hint:"Regarde l'ancien solde du premier extrait et la situation initiale de la première feuille de caisse. Ce que la société possède va au débit.",
-   l:[{c:"5500",db:12500},{c:"5700",db:1500},{c:"1000",cr:14000}]}]},
+   hint:"Regarde l'ancien solde de chaque extrait (banque ET compte postal) et la situation initiale de la première feuille de caisse. Ce que la société possède va au débit.",
+   l:[{c:"5500",db:12500},{c:"5600",db:6000},{c:"5700",db:1500},{c:"1000",cr:20000}]}]},
 
 /* ============ 2 ============ */
 {n:2, ch:CH_B, page:"page 2 (1er journal)", t:"Facture 556 — ALL SIGN : emballages, transport et escompte",
@@ -1073,11 +1077,12 @@ function renderDoc(d){
     return '<div class="doc"><span class="doc-tag note">'+(d.titre||'Note')+'</span><div class="doc-note">'+d.html+'</div></div>';
   }
   if(d.t==='ext'){
-    let h = '<div class="doc"><span class="doc-tag ext">Extrait de compte n° '+d.num+'</span>';
-    h += '<div class="doc-meta"><div><b>Compte à vue</b>'+d.compte+'</div><div><b>Titulaire</b>SPRL OUTISUD</div></div>';
+    let h = '<div class="doc"><span class="doc-tag ext">'+(d.tag||'Extrait de compte')+' n° '+d.num+'</span>';
+    h += '<div class="doc-meta">'+(d.banque?'<div><b>Banque</b>'+d.banque+'</div>':'')+'<div><b>Compte à vue</b>'+d.compte+'</div><div><b>Titulaire</b>SPRL OUTISUD</div></div>';
     h += '<table class="doc-t"><thead><tr><th>Date</th><th>Libellé</th><th class="r">Montant (€)</th></tr></thead><tbody>';
     h += '<tr><td>'+d.ancD+'</td><td>ANCIEN SOLDE</td><td class="r">'+d.ancS+'</td></tr>';
     d.ops.forEach(o=> h += '<tr><td>'+o.d+'</td><td>'+o.lib+'</td><td class="r">'+o.mt+'</td></tr>');
+    if(!d.ops.length) h += '<tr><td>—</td><td><i>Aucun mouvement</i></td><td class="r">—</td></tr>';
     h += '<tr><td>'+d.nouD+'</td><td><b>NOUVEAU SOLDE</b></td><td class="r"><b>'+d.nouS+'</b></td></tr>';
     return h+'</tbody></table></div>';
   }
